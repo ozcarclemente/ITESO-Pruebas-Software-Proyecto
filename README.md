@@ -79,7 +79,7 @@ Before running the project, make sure the following tools are installed on your 
 
 2. Fill in the required environment variables — typically the database connection details (name, user, password, host, and port).
 
-3. *(Optional)* Update the Sequelize configuration parameters in [`backend/config/config.js`](./backend/config/config.js).
+3. _(Optional)_ Update the Sequelize configuration parameters in [`backend/config/config.js`](./backend/config/config.js).
 
 4. If you are **not** using PostgreSQL, install the appropriate database driver:
 
@@ -133,7 +133,7 @@ just migrate
 
 > `just migrate` assumes the development database already exists. Run `just db-create` first on a fresh setup.
 
-*(Optional)* Seed the database with sample data:
+_(Optional)_ Seed the database with sample data:
 
 ```bash
 npm run sqlz -- db:seed:all
@@ -173,9 +173,9 @@ just dev
 
 Once running, the application is available at:
 
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
+| Service     | URL                       |
+| ----------- | ------------------------- |
+| Frontend    | http://localhost:3000     |
 | Backend API | http://localhost:3001/api |
 
 ### Production build
@@ -244,11 +244,19 @@ ITESO-Pruebas-Software-Proyecto/
    git checkout -b feature/your-feature-name
    ```
 
-3. Commit your changes with clear, descriptive messages:
+3. Commit your changes using the Conventional Commits format:
 
    ```bash
-   git commit -m "feat: short description of the change"
+   git commit -m "<type>: short description of the change"
    ```
+
+   Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `chore`.
+
+   Examples:
+
+   - `git commit -m "feat: add article validation tests"`
+   - `git commit -m "fix: handle missing author profile"`
+   - `git commit -m "docs: document local setup workflow"`
 
 4. Push your branch to the remote repository:
 
@@ -263,6 +271,7 @@ ITESO-Pruebas-Software-Proyecto/
 - Do not commit directly to `main`.
 - Each Pull Request should correspond to a single feature or fix.
 - Make sure all tests pass (`npm run test`) before opening a Pull Request.
+- Commit messages are validated by the Husky `commit-msg` hook using `commitlint`.
 - Refer to [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for team conduct guidelines.
 
 ---
