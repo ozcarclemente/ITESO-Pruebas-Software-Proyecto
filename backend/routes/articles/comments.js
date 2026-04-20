@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../../middleware/authentication");
 const {
-  allComments,
-  createComment,
-  deleteComment,
+    allComments,
+    createComment,
+    deleteComment,
 } = require("../../controllers/comments");
 
 //? All Comments for Article

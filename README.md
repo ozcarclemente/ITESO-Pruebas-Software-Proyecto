@@ -51,21 +51,21 @@ Before running the project, make sure the following tools are installed on your 
 
 1. Clone this repository to your local machine:
 
-   ```bash
-   git clone https://github.com/ozcarclemente/ITESO-Pruebas-Software-Proyecto.git
-   ```
+    ```bash
+    git clone https://github.com/ozcarclemente/ITESO-Pruebas-Software-Proyecto.git
+    ```
 
 2. Navigate to the project directory:
 
-   ```bash
-   cd ITESO-Pruebas-Software-Proyecto
-   ```
+    ```bash
+    cd ITESO-Pruebas-Software-Proyecto
+    ```
 
 3. Install all project dependencies (root, frontend, and backend workspaces):
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 ---
 
@@ -73,9 +73,9 @@ Before running the project, make sure the following tools are installed on your 
 
 1. Create a `.env` file inside the `backend/` directory. Use the provided example as a reference:
 
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
+    ```bash
+    cp backend/.env.example backend/.env
+    ```
 
 2. Fill in the required environment variables — typically the database connection details (name, user, password, host, and port).
 
@@ -83,18 +83,18 @@ Before running the project, make sure the following tools are installed on your 
 
 4. If you are **not** using PostgreSQL, install the appropriate database driver:
 
-   > **Note:** The `-w backend` flag installs the package into the backend `package.json`.
+    > **Note:** The `-w backend` flag installs the package into the backend `package.json`.
 
-   ```bash
-   npm install -w backend pg pg-hstore  # PostgreSQL (already installed)
-   npm install -w backend mysql2        # MySQL
-   npm install -w backend mariadb       # MariaDB
-   npm install -w backend sqlite3       # SQLite
-   npm install -w backend tedious       # Microsoft SQL Server
-   npm install -w backend oracledb      # Oracle Database
-   ```
+    ```bash
+    npm install -w backend pg pg-hstore  # PostgreSQL (already installed)
+    npm install -w backend mysql2        # MySQL
+    npm install -w backend mariadb       # MariaDB
+    npm install -w backend sqlite3       # SQLite
+    npm install -w backend tedious       # Microsoft SQL Server
+    npm install -w backend oracledb      # Oracle Database
+    ```
 
-   > Visit [Sequelize — Installing](https://sequelize.org/docs/v6/getting-started/#installing) for more information.
+    > Visit [Sequelize — Installing](https://sequelize.org/docs/v6/getting-started/#installing) for more information.
 
 ---
 
@@ -233,36 +233,35 @@ ITESO-Pruebas-Software-Proyecto/
 
 1. Make sure you are on an updated `main` branch before starting:
 
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
+    ```bash
+    git checkout main
+    git pull origin main
+    ```
 
 2. Create a new branch for each feature or fix, using a descriptive name:
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
 3. Commit your changes using the Conventional Commits format:
 
-   ```bash
-   git commit -m "<type>: short description of the change"
-   ```
+    ```bash
+    git commit -m "<type>: short description of the change"
+    ```
 
-   Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `chore`.
+    Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `chore`.
 
-   Examples:
-
-   - `git commit -m "feat: add article validation tests"`
-   - `git commit -m "fix: handle missing author profile"`
-   - `git commit -m "docs: document local setup workflow"`
+    Examples:
+    - `git commit -m "feat: add article validation tests"`
+    - `git commit -m "fix: handle missing author profile"`
+    - `git commit -m "docs: document local setup workflow"`
 
 4. Push your branch to the remote repository:
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 5. Open a Pull Request on GitHub from your branch into `main` and request a review.
 

@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/authentication");
 const {
-  allArticles,
-  createArticle,
-  singleArticle,
-  updateArticle,
-  deleteArticle,
-  articlesFeed,
+    allArticles,
+    createArticle,
+    singleArticle,
+    updateArticle,
+    deleteArticle,
+    articlesFeed,
 } = require("../controllers/articles");
 
 //? All Articles - by Author/by Tag/Favorited by user
