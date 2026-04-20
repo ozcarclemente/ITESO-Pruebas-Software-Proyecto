@@ -110,7 +110,7 @@ The repository includes a `docker-compose.yaml` file that spins up a PostgreSQL 
 docker compose up -d
 ```
 
-This creates a container with user `postgres`, password `postgres`, and database `database_development` on port `5432`.
+This starts a PostgreSQL container on port `5432` with user `postgres` and password `postgres`.
 
 **Option B — Local PostgreSQL**
 
@@ -122,7 +122,16 @@ Make sure PostgreSQL is running and that the credentials in `backend/.env` match
 npm run sqlz -- db:create
 ```
 
+Or with `just`:
+
+```bash
+just db-create
+just migrate
+```
+
 > `npm run sqlz` is an alias for `npx -w backend sequelize-cli`. Run `npm run sqlz -- --help` to see all available commands.
+
+> `just migrate` assumes the development database already exists. Run `just db-create` first on a fresh setup.
 
 *(Optional)* Seed the database with sample data:
 
@@ -134,6 +143,32 @@ npm run sqlz -- db:seed:all
 
 ```bash
 npm run dev
+```
+
+Or with `just`:
+
+```bash
+just dev
+```
+
+### `just` workflow
+
+If you use [`just`](https://github.com/casey/just), the repository includes these recipes:
+
+```bash
+just install
+just db-up
+just db-create
+just migrate
+just setup
+just dev
+```
+
+Recommended first-run flow:
+
+```bash
+just setup
+just dev
 ```
 
 Once running, the application is available at:
