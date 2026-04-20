@@ -20,14 +20,18 @@
     "lint": "eslint .",
     "sqlz": "npx -w backend sequelize-cli",
     "start": "npm run build -w frontend && npm run start -w backend",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@vitejs/plugin-react-swc": "^4.2.3",
     "concurrently": "^9.2.1",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
+    "husky": "^9.1.7",
     "vitest": "^4.0.18"
   }
 }
