@@ -51,21 +51,21 @@ Before running the project, make sure the following tools are installed on your 
 
 1. Clone this repository to your local machine:
 
-   ```bash
-   git clone https://github.com/ozcarclemente/ITESO-Pruebas-Software-Proyecto.git
-   ```
+    ```bash
+    git clone https://github.com/ozcarclemente/ITESO-Pruebas-Software-Proyecto.git
+    ```
 
 2. Navigate to the project directory:
 
-   ```bash
-   cd ITESO-Pruebas-Software-Proyecto
-   ```
+    ```bash
+    cd ITESO-Pruebas-Software-Proyecto
+    ```
 
 3. Install all project dependencies (root, frontend, and backend workspaces):
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 ---
 
@@ -73,28 +73,28 @@ Before running the project, make sure the following tools are installed on your 
 
 1. Create a `.env` file inside the `backend/` directory. Use the provided example as a reference:
 
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
+    ```bash
+    cp backend/.env.example backend/.env
+    ```
 
 2. Fill in the required environment variables — typically the database connection details (name, user, password, host, and port).
 
-3. *(Optional)* Update the Sequelize configuration parameters in [`backend/config/config.js`](./backend/config/config.js).
+3. _(Optional)_ Update the Sequelize configuration parameters in [`backend/config/config.js`](./backend/config/config.js).
 
 4. If you are **not** using PostgreSQL, install the appropriate database driver:
 
-   > **Note:** The `-w backend` flag installs the package into the backend `package.json`.
+    > **Note:** The `-w backend` flag installs the package into the backend `package.json`.
 
-   ```bash
-   npm install -w backend pg pg-hstore  # PostgreSQL (already installed)
-   npm install -w backend mysql2        # MySQL
-   npm install -w backend mariadb       # MariaDB
-   npm install -w backend sqlite3       # SQLite
-   npm install -w backend tedious       # Microsoft SQL Server
-   npm install -w backend oracledb      # Oracle Database
-   ```
+    ```bash
+    npm install -w backend pg pg-hstore  # PostgreSQL (already installed)
+    npm install -w backend mysql2        # MySQL
+    npm install -w backend mariadb       # MariaDB
+    npm install -w backend sqlite3       # SQLite
+    npm install -w backend tedious       # Microsoft SQL Server
+    npm install -w backend oracledb      # Oracle Database
+    ```
 
-   > Visit [Sequelize — Installing](https://sequelize.org/docs/v6/getting-started/#installing) for more information.
+    > Visit [Sequelize — Installing](https://sequelize.org/docs/v6/getting-started/#installing) for more information.
 
 ---
 
@@ -110,7 +110,7 @@ The repository includes a `docker-compose.yaml` file that spins up a PostgreSQL 
 docker compose up -d
 ```
 
-This creates a container with user `postgres`, password `postgres`, and database `database_development` on port `5432`.
+This starts a PostgreSQL container on port `5432` with user `postgres` and password `postgres`.
 
 **Option B — Local PostgreSQL**
 
@@ -122,9 +122,18 @@ Make sure PostgreSQL is running and that the credentials in `backend/.env` match
 npm run sqlz -- db:create
 ```
 
+Or with `just`:
+
+```bash
+just db-create
+just migrate
+```
+
 > `npm run sqlz` is an alias for `npx -w backend sequelize-cli`. Run `npm run sqlz -- --help` to see all available commands.
 
-*(Optional)* Seed the database with sample data:
+> `just migrate` assumes the development database already exists. Run `just db-create` first on a fresh setup.
+
+_(Optional)_ Seed the database with sample data:
 
 ```bash
 npm run sqlz -- db:seed:all
@@ -136,11 +145,37 @@ npm run sqlz -- db:seed:all
 npm run dev
 ```
 
+Or with `just`:
+
+```bash
+just dev
+```
+
+### `just` workflow
+
+If you use [`just`](https://github.com/casey/just), the repository includes these recipes:
+
+```bash
+just install
+just db-up
+just db-create
+just migrate
+just setup
+just dev
+```
+
+Recommended first-run flow:
+
+```bash
+just setup
+just dev
+```
+
 Once running, the application is available at:
 
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
+| Service     | URL                       |
+| ----------- | ------------------------- |
+| Frontend    | http://localhost:3000     |
 | Backend API | http://localhost:3001/api |
 
 ### Production build
@@ -198,28 +233,35 @@ ITESO-Pruebas-Software-Proyecto/
 
 1. Make sure you are on an updated `main` branch before starting:
 
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
+    ```bash
+    git checkout main
+    git pull origin main
+    ```
 
 2. Create a new branch for each feature or fix, using a descriptive name:
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
-3. Commit your changes with clear, descriptive messages:
+3. Commit your changes using the Conventional Commits format:
 
-   ```bash
-   git commit -m "feat: short description of the change"
-   ```
+    ```bash
+    git commit -m "<type>: short description of the change"
+    ```
+
+    Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `chore`.
+
+    Examples:
+    - `git commit -m "feat: add article validation tests"`
+    - `git commit -m "fix: handle missing author profile"`
+    - `git commit -m "docs: document local setup workflow"`
 
 4. Push your branch to the remote repository:
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 5. Open a Pull Request on GitHub from your branch into `main` and request a review.
 
@@ -228,6 +270,7 @@ ITESO-Pruebas-Software-Proyecto/
 - Do not commit directly to `main`.
 - Each Pull Request should correspond to a single feature or fix.
 - Make sure all tests pass (`npm run test`) before opening a Pull Request.
+- Commit messages are validated by the Husky `commit-msg` hook using `commitlint`.
 - Refer to [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for team conduct guidelines.
 
 ---
