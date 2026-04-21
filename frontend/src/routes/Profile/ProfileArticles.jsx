@@ -4,35 +4,36 @@ import ArticlesPreview from "../../components/ArticlesPreview";
 import useArticleList from "../../hooks/useArticles";
 
 function ProfileArticles() {
-  const { username } = useParams();
+    const { username } = useParams();
 
-  const { articles, articlesCount, loading, setArticlesData } = useArticleList({
-    location: "profile",
-    username,
-  });
+    const { articles, articlesCount, loading, setArticlesData } =
+        useArticleList({
+            location: "profile",
+            username,
+        });
 
-  return loading ? (
-    <div className="article-preview">
-      <em>Loading {username} articles...</em>
-    </div>
-  ) : articles.length > 0 ? (
-    <>
-      <ArticlesPreview
-        articles={articles}
-        loading={loading}
-        updateArticles={setArticlesData}
-      />
+    return loading ? (
+        <div className="article-preview">
+            <em>Loading {username} articles...</em>
+        </div>
+    ) : articles.length > 0 ? (
+        <>
+            <ArticlesPreview
+                articles={articles}
+                loading={loading}
+                updateArticles={setArticlesData}
+            />
 
-      <ArticlesPagination
-        articlesCount={articlesCount}
-        location="profile"
-        updateArticles={setArticlesData}
-        username={username}
-      />
-    </>
-  ) : (
-    <div className="article-preview">{username} doesn't have articles.</div>
-  );
+            <ArticlesPagination
+                articlesCount={articlesCount}
+                location="profile"
+                updateArticles={setArticlesData}
+                username={username}
+            />
+        </>
+    ) : (
+        <div className="article-preview">{username} doesn't have articles.</div>
+    );
 }
 
 export default ProfileArticles;

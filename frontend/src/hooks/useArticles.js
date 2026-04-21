@@ -3,25 +3,25 @@ import { useAuth } from "../context/AuthContext";
 import getArticles from "../services/getArticles";
 
 function useArticles({ location, tabName, tagName, username }) {
-  const [{ articles, articlesCount }, setArticlesData] = useState({
-    articles: [],
-    articlesCount: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const { headers } = useAuth();
+    const [{ articles, articlesCount }, setArticlesData] = useState({
+        articles: [],
+        articlesCount: 0,
+    });
+    const [loading, setLoading] = useState(true);
+    const { headers } = useAuth();
 
-  useEffect(() => {
-    if (!headers && tabName === "feed") return;
+    useEffect(() => {
+        if (!headers && tabName === "feed") return;
 
-    setLoading(true);
+        setLoading(true);
 
-    getArticles({ headers, location, tabName, tagName, username })
-      .then(setArticlesData)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [headers, location, tabName, tagName, username]);
+        getArticles({ headers, location, tabName, tagName, username })
+            .then(setArticlesData)
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, [headers, location, tabName, tagName, username]);
 
-  return { articles, articlesCount, loading, setArticlesData };
+    return { articles, articlesCount, loading, setArticlesData };
 }
 
 export default useArticles;

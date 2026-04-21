@@ -5,26 +5,26 @@ import FavButton from "../FavButton";
 import FollowButton from "../FollowButton";
 
 function ArticlesButtons({ article, setArticle }) {
-  const { author: { username } = {}, author } = article || {};
-  const { loggedUser } = useAuth();
-  const { slug } = useParams();
+    const { author: { username } = {}, author } = article || {};
+    const { loggedUser } = useAuth();
+    const { slug } = useParams();
 
-  const followHandler = (author) => {
-    setArticle((prev) => ({ ...prev, author }));
-  };
+    const followHandler = (author) => {
+        setArticle((prev) => ({ ...prev, author }));
+    };
 
-  const handleFav = ({ favorited, favoritesCount }) => {
-    setArticle((prev) => ({ ...prev, favorited, favoritesCount }));
-  };
+    const handleFav = ({ favorited, favoritesCount }) => {
+        setArticle((prev) => ({ ...prev, favorited, favoritesCount }));
+    };
 
-  return loggedUser.username === username ? (
-    <ArticleAuthorButtons {...article} slug={slug} />
-  ) : (
-    <>
-      <FollowButton {...author} handler={followHandler} />
-      <FavButton {...article} handler={handleFav} text />
-    </>
-  );
+    return loggedUser.username === username ? (
+        <ArticleAuthorButtons {...article} slug={slug} />
+    ) : (
+        <>
+            <FollowButton {...author} handler={followHandler} />
+            <FavButton {...article} handler={handleFav} text />
+        </>
+    );
 }
 
 export default ArticlesButtons;
