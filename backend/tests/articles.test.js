@@ -94,6 +94,8 @@ describe("Articles CRUD test", () => {
     });
 
     describe("GET /api/articles/:slug", () => {
+        // tests for READ operations
+
         it("should return a specific article", async () => {
             // test that checks that a specific article is returned
             const article = await Article.create({
@@ -156,6 +158,8 @@ describe("Articles CRUD test", () => {
     });
 
     describe("PUT /api/articles/:slug", () => {
+        // tests for UPDATE operations
+
         it("should update an article's title", async () => {
             // test that checks that a specific article is updated
             const article = await Article.create({
@@ -218,7 +222,7 @@ describe("Articles CRUD test", () => {
     });
 
     describe("DELETE /api/articles/:slug", () => {
-        // tests for DELETE operation
+        // tests for DELETE operations
 
         it("should delete an article", async () => {
             // test that checks that a specific article is deleted
