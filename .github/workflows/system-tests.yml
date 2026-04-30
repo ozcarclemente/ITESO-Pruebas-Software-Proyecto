@@ -1,0 +1,96 @@
+name: System Tests
+
+on:
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    system-tests:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Create .env file
+              working-directory: ./backend
+              run: |
+                cat > .env << 'EOF'
+                NODE_ENV=test
+                PORT=3001
+                TEST_DB_HOSTNAME=localhost
+                TEST_DB_USERNAME=postgres
+                TEST_DB_PASSWORD=postgres
+                TEST_DB_NAME=conduit_test
+                TEST_DB_DIALECT=postgres
+                TEST_DB_LOGGING=false
+                JWT_KEY=test_secret_key
+                EOF
+                echo ".env file created with test configuration"
+
+            - name: Create test database
+              run: npm run sqlz -- db:create
+
+            - name: Run migrations
+              run: npm run sqlz db:migrate
+
+            - name: Seed database
+              run: npm run sqlz db:seed:all
+
+            - name: Install Playwright browsers
+              run: npx playwright install --with-deps chromium
+
+            - name: Start application
+              run: npm run dev > /tmp/app.log 2>&1 &
+
+            - name: Wait for frontend
+              run: npx wait-on http://localhost:3000 --timeout 30000
+
+            - name: Wait for application to be ready
+              run: npx wait-on http://localhost:3001 --timeout 30000
+
+            - name: Run system tests
+              run: npm run test:system
+              env:
+                  NODE_ENV: test
+
+            - name: Show application logs
+              if: always()
+              run: |
+                echo "=== Application Log ==="
+                cat /tmp/app.log || echo "No log file"
+                echo ""
+                echo "=== Test Results ==="
+                # Si cucumber genera log separado
+                cat /tmp/cucumber.log || echo "No cucumber log"
+
+            - name: Stop application
+              if: always()
+              run: pkill -f "npm run dev" || true

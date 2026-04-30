@@ -42,6 +42,13 @@ export default defineConfig([
         },
     },
     {
+        files: ["frontend/tests/**/*.{js,jsx}"],
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.jest, ...globals.node },
+            sourceType: "module",
+        },
+    },
+    {
         files: ["frontend/vite.config.js"],
         languageOptions: {
             globals: globals.node,
@@ -51,6 +58,20 @@ export default defineConfig([
         files: ["eslint.config.mjs"],
         languageOptions: {
             globals: globals.node,
+        },
+    },
+    {
+        files: ["jest.config.js", "cucumber.js", "tests/system/**/**/*.js"],
+        languageOptions: {
+            globals: globals.node,
+            sourceType: "commonjs",
+        },
+    },
+    {
+        files: ["backend/tests/**/*.js"],
+        languageOptions: {
+            globals: globals.node,
+            sourceType: "commonjs",
         },
     },
 ]);

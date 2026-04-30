@@ -1,0 +1,165 @@
+name: Code Coverage
+
+on:
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+  
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout PR branch
+              uses: actions/checkout@v4
+              with:
+                path: pr
+
+            - name: Checkout main branch
+              uses: actions/checkout@v4
+              with:
+                  ref: main
+                  path: main
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+                  cache-dependency-path: |
+                    pr/package-lock.json
+                    main/package-lock.json
+
+            - name: Install dependencies (PR)
+              working-directory: ./pr
+              run: npm ci
+
+            - name: Run tests with coverage (PR)
+              working-directory: ./pr
+              run: npm run test:coverage
+
+            - name: Copy PR coverage
+              run: |
+                mkdir -p coverage-pr
+                cp pr/coverage/coverage-final.json coverage-pr/ || echo "No PR coverage found"
+                cp pr/coverage/lcov.info coverage-pr/ || echo "No PR lcov found"
+
+            - name: Install dependencies (main)
+              working-directory: ./main
+              run: npm ci
+
+            - name: Run tests with coverage (main)
+              working-directory: ./main
+              run: npm run test:coverage 2>&1 || true
+
+            - name: Copy main coverage
+              run: |
+                mkdir -p coverage-main
+                cp main/coverage/coverage-final.json coverage-main/ || echo "No main coverage found"
+
+            - name: Verify coverage files exist
+              run: |
+                if [ ! -f coverage-main/coverage-final.json ]; then
+                  echo "❌ Main coverage file not found"
+                  ls -la main/coverage/ || echo "No main/coverage directory"
+                  exit 1
+                fi
+                if [ ! -f coverage-pr/coverage-final.json ]; then
+                  echo "❌ PR coverage file not found"
+                  ls -la pr/coverage/ || echo "No pr/coverage directory"
+                  exit 1
+                fi
+                echo "✅ Both coverage files found"
+
+            - name: Comment PR with coverage comparison
+              if: github.event_name == 'pull_request' && always()
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                    const fs = require('fs');
+
+                    function calculateSummary(coverageFile) {
+                      try {
+                        const coverage = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
+                        const totals = {
+                          statements: { covered: 0, total: 0, pct: 0 },
+                          branches: { covered: 0, total: 0, pct: 0 },
+                          functions: { covered: 0, total: 0, pct: 0 },
+                          lines: { covered: 0, total: 0, pct: 0 }
+                        };
+
+                        Object.values(coverage).forEach(file => {
+                          if (!file.s) return;
+                          const statements = Object.values(file.s || {});
+                          totals.statements.total += statements.length;
+                          totals.statements.covered += statements.filter(x => x > 0).length;
+
+                          const branches = Object.values(file.b || {});
+                          branches.forEach(branch => {
+                            if (Array.isArray(branch)) {
+                              totals.branches.total += branch.length;
+                              totals.branches.covered += branch.filter(x => x > 0).length;
+                            }
+                          });
+
+                          const functions = Object.values(file.f || {});
+                          totals.functions.total += functions.length;
+                          totals.functions.covered += functions.filter(x => x > 0).length;
+
+                          totals.lines.total += statements.length;
+                          totals.lines.covered += statements.filter(x => x > 0).length;
+                        });
+
+                        Object.keys(totals).forEach(metric => {
+                          totals[metric].pct = totals[metric].total > 0
+                            ? Math.round((totals[metric].covered / totals[metric].total) * 10000) / 100
+                            : 0;
+                        });
+
+                        return totals;
+                      } catch (error) {
+                        console.log('Could not calculate coverage:', error.message);
+                        return null;
+                      }
+                    }
+
+                    const mainTotals = calculateSummary('coverage-main/coverage-final.json');
+                    const prTotals = calculateSummary('coverage-pr/coverage-final.json');
+
+                    if (mainTotals && prTotals) {
+                      const metrics = ['statements', 'branches', 'functions', 'lines'];
+                      let comment = '## 📊 Coverage Comparison (main vs PR)\n\n';
+                      comment += '| Metric | Main | PR | Change |\n';
+                      comment += '|--------|------|-----|--------|\n';
+
+                      let coverageDecreased = false;
+
+                      metrics.forEach(metric => {
+                        const mainPct = mainTotals[metric].pct;
+                        const prPct = prTotals[metric].pct;
+                        const change = prPct - mainPct;
+                        const icon = change < 0 ? '❌' : change > 0 ? '✨' : '✓';
+                        comment += `| ${metric} | ${mainPct.toFixed(2)}% | ${prPct.toFixed(2)}% | ${icon} ${change >= 0 ? '+' : ''}${change.toFixed(2)}% |\n`;
+
+                        if (change < 0) {
+                          coverageDecreased = true;
+                        }
+                      });
+
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: comment
+                      });
+
+                      if (coverageDecreased) {
+                        core.setFailed('❌ Coverage decreased in PR');
+                      }
+                    } else {
+                      console.log('Could not compare coverage: summary calculation failed');
+                    }

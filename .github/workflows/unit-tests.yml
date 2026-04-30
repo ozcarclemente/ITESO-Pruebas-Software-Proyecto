@@ -4,9 +4,7 @@ on:
     pull_request:
         branches:
             - main
-    push:
-        branches:
-            - main
+    workflow_dispatch:
 
 permissions:
     contents: read
@@ -22,8 +20,10 @@ jobs:
                   node-version: 20
                   cache: npm
 
-            - name: Install dependencies
+            - name: Install root dependencies
               run: npm ci
+              env:
+                HUSKY: 0
 
             - name: Run tests
               run: npm run test
