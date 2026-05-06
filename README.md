@@ -100,44 +100,48 @@ Before running the project, make sure the following tools are installed on your 
 
 ## Running the Application
 
-### 1. Start the database
+### 1. Install dependencies
 
-**Option A — Docker (recommended)**
+Make sure you have already run `npm install` in the root directory (from Installation section).
 
-The repository includes a `docker-compose.yaml` file that spins up a PostgreSQL 15 container with the required configuration:
+### 2. Setup database and seed data
+
+**Option A — Single command (recommended):**
+
+```bash
+npm run setup
+```
+
+This runs `docker compose up -d`, creates the database, runs migrations, and seeds sample data.
+
+**Option B — Manual steps:**
+
+Start the database container:
 
 ```bash
 docker compose up -d
 ```
 
-This starts a PostgreSQL container on port `5432` with user `postgres` and password `postgres`.
-
-**Option B — Local PostgreSQL**
-
-Make sure PostgreSQL is running and that the credentials in `backend/.env` match your local server configuration.
-
-### 2. Create the database and run migrations
+Then create database, run migrations, and seed:
 
 ```bash
 npm run sqlz -- db:create
-```
-
-Or with `just`:
-
-```bash
-just db-create
-just migrate
-```
-
-> `npm run sqlz` is an alias for `npx -w backend sequelize-cli`. Run `npm run sqlz -- --help` to see all available commands.
-
-> `just migrate` assumes the development database already exists. Run `just db-create` first on a fresh setup.
-
-_(Optional)_ Seed the database with sample data:
-
-```bash
+npm run sqlz -- db:migrate
 npm run sqlz -- db:seed:all
 ```
+
+**Option C — With `just`:**
+
+```bash
+docker compose up -d
+just db-create
+just migrate
+just seed
+```
+
+> **Note:** This option requires `just` to be installed on your system. See [Just installation](https://github.com/casey/just#installation) for setup instructions.
+
+> `npm run sqlz` is an alias for `npx -w backend sequelize-cli`. Run `npm run sqlz -- --help` to see all available commands.
 
 ### 3. Start the development server
 
@@ -190,11 +194,23 @@ npm run start
 
 ## Running Tests
 
+Run unit and integration tests:
+
 ```bash
 npm run test
 ```
 
-This runs the full test suite using [Vitest](https://vitest.dev/).
+Run system tests:
+
+```bash
+npm run test:system
+```
+
+Run all tests (unit, integration, and system):
+
+```bash
+npm run test:all
+```
 
 ---
 
@@ -208,6 +224,7 @@ ITESO-Pruebas-Software-Proyecto/
 │   ├── models/                 # Sequelize data models
 │   ├── routes/                 # API route definitions
 │   ├── seeders/                # Sample data seeders
+│   ├── tests/                  # Test suites
 │   ├── .env.example            # Environment variables template
 │   └── package.json            # Backend dependencies
 ├── frontend/                   # React user interface
@@ -215,14 +232,16 @@ ITESO-Pruebas-Software-Proyecto/
 │   │   ├── components/         # Reusable React components
 │   │   ├── pages/              # Main application views
 │   │   └── services/           # API communication logic
+│   ├── tests/                  # Test suites
 │   ├── index.html              # HTML entry point
 │   └── package.json            # Frontend dependencies
+├── tests/system/               # System test suites
 ├── .gitignore
 ├── CODE_OF_CONDUCT.md
 ├── docker-compose.yaml         # PostgreSQL container configuration
 ├── LICENSE
 ├── package.json                # Root workspace scripts and dev dependencies
-└── vitest.config.js            # Test framework configuration
+└── jest.config.js              # Test framework configuration
 ```
 
 ---

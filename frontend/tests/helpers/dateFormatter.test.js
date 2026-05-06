@@ -1,4 +1,4 @@
-import dateFormatter from "./dateFormatter";
+import dateFormatter from "../../src/helpers/dateFormatter";
 
 it("should format an ISO string", () => {
     const ISOString = "2020-01-01T12:11:08.212Z";
