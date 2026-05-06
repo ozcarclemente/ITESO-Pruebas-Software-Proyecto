@@ -12,6 +12,19 @@ permissions:
 jobs:
     test:
         runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
         steps:
             - uses: actions/checkout@v4
 
@@ -24,6 +37,35 @@ jobs:
               run: npm ci
               env:
                 HUSKY: 0
+
+            - name: Create .env file
+              working-directory: ./backend
+              run: |
+                cat > .env << 'EOF'
+                PORT=3001
+                JWT_KEY=test_secret_key
+                DEV_DB_USERNAME=postgres
+                DEV_DB_PASSWORD=postgres
+                DEV_DB_NAME=database_development
+                DEV_DB_HOSTNAME=localhost
+                DEV_DB_DIALECT=postgres
+                DEV_DB_LOGGING=false
+                TEST_DB_USERNAME=postgres
+                TEST_DB_PASSWORD=postgres
+                TEST_DB_NAME=database_testing
+                TEST_DB_HOSTNAME=localhost
+                TEST_DB_DIALECT=postgres
+                TEST_DB_LOGGING=false
+                EOF
+
+            - name: Create database
+              run: npm run sqlz -- db:create
+
+            - name: Run migrations
+              run: npm run sqlz db:migrate
+
+            - name: Seed database
+              run: npm run sqlz db:seed:all
 
             - name: Run tests
               run: npm run test
