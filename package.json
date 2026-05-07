@@ -27,7 +27,7 @@
         "test:system": "cucumber-js",
         "test:all": "npm test && npm run test:system",
         "prepare": "husky || true",
-        "setup": "docker compose up -d && npm run sqlz -- db:create && npm run sqlz -- db:migrate && npm run sqlz -- db:seed:all",
+        "setup": "docker compose up -d && npm run sqlz -- db:create && npm run sqlz -- db:migrate",
         "down": "docker compose down",
         "app": "npm run setup && npm run dev"
     },

@@ -1,8 +1,7 @@
-require("dotenv").config({ path: `${__dirname}/../../.env` });
 process.env.NODE_ENV = "development";
 
 const request = require("supertest");
-const { sequelize, User, Article, Comment } = require("../../models");
+const { createTestSequelize } = require("./sequelize-helper");
 const { jwtSign } = require("../../helper/jwt");
 const express = require("express");
 const cors = require("cors");
@@ -14,6 +13,7 @@ let app;
 let testUser;
 let testArticle;
 let token;
+let db;
 
 describe("Comments Integration - Supertest + Postgres Test DB", () => {
     beforeAll(async () => {
@@ -21,7 +21,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
         jest.spyOn(console, "error").mockImplementation(() => {});
 
         try {
-            await sequelize.sync({ force: true });
+            db = await createTestSequelize();
 
             app = express();
             app.use(cors());
@@ -29,7 +29,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
             app.use("/articles", verifyToken, commentsRouter);
             app.use(errorHandler);
 
-            testUser = await User.create({
+            testUser = await db.User.create({
                 email: "test@example.com",
                 username: "testuser",
                 password: "hashedpassword123",
@@ -38,7 +38,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
 
             token = await jwtSign(testUser);
 
-            testArticle = await Article.create({
+            testArticle = await db.Article.create({
                 slug: "how-to-train-your-dragon",
                 title: "How to train your dragon",
                 description: "Ever wonder how?",
@@ -64,7 +64,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
         });
 
         it("should get all comments for article from DB", async () => {
-            await Comment.create({
+            await db.Comment.create({
                 body: "Great article!",
                 articleId: testArticle.id,
                 userId: testUser.id,
@@ -105,7 +105,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
             expect(res.body.comment.body).toBe("Well written article!");
             expect(res.body.comment.author.username).toBe("testuser");
 
-            const dbComment = await Comment.findOne({
+            const dbComment = await db.Comment.findOne({
                 where: { body: "Well written article!" },
             });
             expect(dbComment).toBeDefined();
@@ -152,7 +152,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
         let commentToDelete;
 
         beforeEach(async () => {
-            commentToDelete = await Comment.create({
+            commentToDelete = await db.Comment.create({
                 body: "Comment to delete",
                 articleId: testArticle.id,
                 userId: testUser.id,
@@ -169,7 +169,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("message");
 
-            const dbComment = await Comment.findByPk(commentToDelete.id);
+            const dbComment = await db.Comment.findByPk(commentToDelete.id);
             expect(dbComment).toBeNull();
         });
 
@@ -180,7 +180,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
 
             expect(res.status).toBe(401);
 
-            const dbComment = await Comment.findByPk(commentToDelete.id);
+            const dbComment = await db.Comment.findByPk(commentToDelete.id);
             expect(dbComment).toBeDefined();
         });
 
@@ -193,7 +193,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
         });
 
         it("should fail deleting others comment", async () => {
-            const otherUser = await User.create({
+            const otherUser = await db.User.create({
                 email: "other@example.com",
                 username: "otheruser",
                 password: "hashedpassword123",
@@ -209,7 +209,7 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
 
             expect(res.status).toBe(403);
 
-            const dbComment = await Comment.findByPk(commentToDelete.id);
+            const dbComment = await db.Comment.findByPk(commentToDelete.id);
             expect(dbComment).toBeDefined();
         });
     });
@@ -218,8 +218,9 @@ describe("Comments Integration - Supertest + Postgres Test DB", () => {
         console.log.mockRestore();
         console.error.mockRestore();
 
-        if (sequelize) {
-            await sequelize.close();
+        if (db && db.sequelize) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await db.sequelize.close();
         }
     });
 });
