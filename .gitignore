@@ -44,3 +44,5 @@ yarn-error.log*
 
 *ignore*
 cucumber-report.*
+
+GEMINI.md 
