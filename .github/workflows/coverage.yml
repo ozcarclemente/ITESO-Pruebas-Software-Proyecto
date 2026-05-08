@@ -5,7 +5,7 @@ on:
         branches:
             - main
     workflow_dispatch:
-  
+
 permissions:
     contents: read
     pull-requests: write
@@ -17,7 +17,7 @@ jobs:
             - name: Checkout PR branch
               uses: actions/checkout@v4
               with:
-                path: pr
+                  path: pr
 
             - name: Checkout main branch
               uses: actions/checkout@v4
@@ -31,8 +31,8 @@ jobs:
                   node-version: 20
                   cache: npm
                   cache-dependency-path: |
-                    pr/package-lock.json
-                    main/package-lock.json
+                      pr/package-lock.json
+                      main/package-lock.json
 
             - name: Install dependencies (PR)
               working-directory: ./pr
@@ -44,9 +44,9 @@ jobs:
 
             - name: Copy PR coverage
               run: |
-                mkdir -p coverage-pr/backend coverage-pr/frontend
-                cp pr/coverage/coverage-final.json coverage-pr/backend/ 2>/dev/null || echo "No PR backend coverage found"
-                cp pr/frontend/coverage/coverage-final.json coverage-pr/frontend/ 2>/dev/null || echo "No PR frontend coverage found"
+                  mkdir -p coverage-pr/backend coverage-pr/frontend
+                  cp pr/coverage/coverage-final.json coverage-pr/backend/ 2>/dev/null || echo "No PR backend coverage found"
+                  cp pr/frontend/coverage/coverage-final.json coverage-pr/frontend/ 2>/dev/null || echo "No PR frontend coverage found"
 
             - name: Install dependencies (main)
               working-directory: ./main
@@ -58,135 +58,135 @@ jobs:
 
             - name: Copy main coverage
               run: |
-                mkdir -p coverage-main/backend coverage-main/frontend
-                cp main/coverage/coverage-final.json coverage-main/backend/ 2>/dev/null || echo "No main backend coverage found"
-                cp main/frontend/coverage/coverage-final.json coverage-main/frontend/ 2>/dev/null || echo "No main frontend coverage found"
+                  mkdir -p coverage-main/backend coverage-main/frontend
+                  cp main/coverage/coverage-final.json coverage-main/backend/ 2>/dev/null || echo "No main backend coverage found"
+                  cp main/frontend/coverage/coverage-final.json coverage-main/frontend/ 2>/dev/null || echo "No main frontend coverage found"
 
             - name: Verify coverage files exist
               run: |
-                echo "Checking main backend coverage..."
-                if [ ! -f coverage-main/backend/coverage-final.json ]; then
-                  echo "❌ Main backend coverage file not found"
-                  ls -la main/coverage/ 2>/dev/null || echo "No main/coverage directory"
-                  exit 1
-                fi
-                echo "Checking PR backend coverage..."
-                if [ ! -f coverage-pr/backend/coverage-final.json ]; then
-                  echo "❌ PR backend coverage file not found"
-                  ls -la pr/coverage/ 2>/dev/null || echo "No pr/coverage directory"
-                  exit 1
-                fi
-                echo "Checking main frontend coverage..."
-                if [ ! -f coverage-main/frontend/coverage-final.json ]; then
-                  echo "⚠️ Main frontend coverage file not found (optional)"
-                fi
-                echo "Checking PR frontend coverage..."
-                if [ ! -f coverage-pr/frontend/coverage-final.json ]; then
-                  echo "⚠️ PR frontend coverage file not found (optional)"
-                fi
-                echo "✅ Backend coverage files found"
+                  echo "Checking main backend coverage..."
+                  if [ ! -f coverage-main/backend/coverage-final.json ]; then
+                    echo "❌ Main backend coverage file not found"
+                    ls -la main/coverage/ 2>/dev/null || echo "No main/coverage directory"
+                    exit 1
+                  fi
+                  echo "Checking PR backend coverage..."
+                  if [ ! -f coverage-pr/backend/coverage-final.json ]; then
+                    echo "❌ PR backend coverage file not found"
+                    ls -la pr/coverage/ 2>/dev/null || echo "No pr/coverage directory"
+                    exit 1
+                  fi
+                  echo "Checking main frontend coverage..."
+                  if [ ! -f coverage-main/frontend/coverage-final.json ]; then
+                    echo "⚠️ Main frontend coverage file not found (optional)"
+                  fi
+                  echo "Checking PR frontend coverage..."
+                  if [ ! -f coverage-pr/frontend/coverage-final.json ]; then
+                    echo "⚠️ PR frontend coverage file not found (optional)"
+                  fi
+                  echo "✅ Backend coverage files found"
 
             - name: Comment PR with coverage comparison
               if: github.event_name == 'pull_request' && always()
               uses: actions/github-script@v7
               with:
                   script: |
-                    const fs = require('fs');
+                      const fs = require('fs');
 
-                    function calculateSummary(coverageFile) {
-                      try {
-                        const coverage = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
-                        const totals = {
-                          statements: { covered: 0, total: 0, pct: 0 },
-                          branches: { covered: 0, total: 0, pct: 0 },
-                          functions: { covered: 0, total: 0, pct: 0 },
-                          lines: { covered: 0, total: 0, pct: 0 }
-                        };
+                      function calculateSummary(coverageFile) {
+                        try {
+                          const coverage = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
+                          const totals = {
+                            statements: { covered: 0, total: 0, pct: 0 },
+                            branches: { covered: 0, total: 0, pct: 0 },
+                            functions: { covered: 0, total: 0, pct: 0 },
+                            lines: { covered: 0, total: 0, pct: 0 }
+                          };
 
-                        Object.values(coverage).forEach(file => {
-                          if (!file.s) return;
-                          const statements = Object.values(file.s || {});
-                          totals.statements.total += statements.length;
-                          totals.statements.covered += statements.filter(x => x > 0).length;
+                          Object.values(coverage).forEach(file => {
+                            if (!file.s) return;
+                            const statements = Object.values(file.s || {});
+                            totals.statements.total += statements.length;
+                            totals.statements.covered += statements.filter(x => x > 0).length;
 
-                          const branches = Object.values(file.b || {});
-                          branches.forEach(branch => {
-                            if (Array.isArray(branch)) {
-                              totals.branches.total += branch.length;
-                              totals.branches.covered += branch.filter(x => x > 0).length;
-                            }
+                            const branches = Object.values(file.b || {});
+                            branches.forEach(branch => {
+                              if (Array.isArray(branch)) {
+                                totals.branches.total += branch.length;
+                                totals.branches.covered += branch.filter(x => x > 0).length;
+                              }
+                            });
+
+                            const functions = Object.values(file.f || {});
+                            totals.functions.total += functions.length;
+                            totals.functions.covered += functions.filter(x => x > 0).length;
+
+                            totals.lines.total += statements.length;
+                            totals.lines.covered += statements.filter(x => x > 0).length;
                           });
 
-                          const functions = Object.values(file.f || {});
-                          totals.functions.total += functions.length;
-                          totals.functions.covered += functions.filter(x => x > 0).length;
+                          Object.keys(totals).forEach(metric => {
+                            totals[metric].pct = totals[metric].total > 0
+                              ? Math.round((totals[metric].covered / totals[metric].total) * 10000) / 100
+                              : 0;
+                          });
 
-                          totals.lines.total += statements.length;
-                          totals.lines.covered += statements.filter(x => x > 0).length;
+                          return totals;
+                        } catch (error) {
+                          return null;
+                        }
+                      }
+
+                      function buildCoverageTable(mainTotals, prTotals, label) {
+                        const metrics = ['statements', 'branches', 'functions', 'lines'];
+                        let table = `### ${label}\n`;
+                        table += '| Metric | Main | PR | Change |\n';
+                        table += '|--------|------|-----|--------|\n';
+                        let decreased = false;
+
+                        metrics.forEach(metric => {
+                          const mainPct = mainTotals[metric].pct;
+                          const prPct = prTotals[metric].pct;
+                          const change = prPct - mainPct;
+                          const icon = change < 0 ? '❌' : change > 0 ? '✨' : '✓';
+                          table += `| ${metric} | ${mainPct.toFixed(2)}% | ${prPct.toFixed(2)}% | ${icon} ${change >= 0 ? '+' : ''}${change.toFixed(2)}% |\n`;
+                          if (change < 0) decreased = true;
                         });
 
-                        Object.keys(totals).forEach(metric => {
-                          totals[metric].pct = totals[metric].total > 0
-                            ? Math.round((totals[metric].covered / totals[metric].total) * 10000) / 100
-                            : 0;
+                        return { table, decreased };
+                      }
+
+                      const backendMain = calculateSummary('coverage-main/backend/coverage-final.json');
+                      const backendPr = calculateSummary('coverage-pr/backend/coverage-final.json');
+                      const frontendMain = calculateSummary('coverage-main/frontend/coverage-final.json');
+                      const frontendPr = calculateSummary('coverage-pr/frontend/coverage-final.json');
+
+                      let comment = '## 📊 Coverage Comparison (main vs PR)\n\n';
+                      let overallDecreased = false;
+
+                      if (backendMain && backendPr) {
+                        const backend = buildCoverageTable(backendMain, backendPr, '🔧 Backend');
+                        comment += backend.table + '\n';
+                        if (backend.decreased) overallDecreased = true;
+                      }
+
+                      if (frontendMain && frontendPr) {
+                        const frontend = buildCoverageTable(frontendMain, frontendPr, '⚛️ Frontend');
+                        comment += frontend.table + '\n';
+                        if (frontend.decreased) overallDecreased = true;
+                      }
+
+                      if (backendMain && backendPr || frontendMain && frontendPr) {
+                        github.rest.issues.createComment({
+                          issue_number: context.issue.number,
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          body: comment
                         });
 
-                        return totals;
-                      } catch (error) {
-                        return null;
+                        if (overallDecreased) {
+                          core.setFailed('❌ Coverage decreased in PR');
+                        }
+                      } else {
+                        console.log('Could not compare coverage: no coverage files found');
                       }
-                    }
-
-                    function buildCoverageTable(mainTotals, prTotals, label) {
-                      const metrics = ['statements', 'branches', 'functions', 'lines'];
-                      let table = `### ${label}\n`;
-                      table += '| Metric | Main | PR | Change |\n';
-                      table += '|--------|------|-----|--------|\n';
-                      let decreased = false;
-
-                      metrics.forEach(metric => {
-                        const mainPct = mainTotals[metric].pct;
-                        const prPct = prTotals[metric].pct;
-                        const change = prPct - mainPct;
-                        const icon = change < 0 ? '❌' : change > 0 ? '✨' : '✓';
-                        table += `| ${metric} | ${mainPct.toFixed(2)}% | ${prPct.toFixed(2)}% | ${icon} ${change >= 0 ? '+' : ''}${change.toFixed(2)}% |\n`;
-                        if (change < 0) decreased = true;
-                      });
-
-                      return { table, decreased };
-                    }
-
-                    const backendMain = calculateSummary('coverage-main/backend/coverage-final.json');
-                    const backendPr = calculateSummary('coverage-pr/backend/coverage-final.json');
-                    const frontendMain = calculateSummary('coverage-main/frontend/coverage-final.json');
-                    const frontendPr = calculateSummary('coverage-pr/frontend/coverage-final.json');
-
-                    let comment = '## 📊 Coverage Comparison (main vs PR)\n\n';
-                    let overallDecreased = false;
-
-                    if (backendMain && backendPr) {
-                      const backend = buildCoverageTable(backendMain, backendPr, '🔧 Backend');
-                      comment += backend.table + '\n';
-                      if (backend.decreased) overallDecreased = true;
-                    }
-
-                    if (frontendMain && frontendPr) {
-                      const frontend = buildCoverageTable(frontendMain, frontendPr, '⚛️ Frontend');
-                      comment += frontend.table + '\n';
-                      if (frontend.decreased) overallDecreased = true;
-                    }
-
-                    if (backendMain && backendPr || frontendMain && frontendPr) {
-                      github.rest.issues.createComment({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        body: comment
-                      });
-
-                      if (overallDecreased) {
-                        core.setFailed('❌ Coverage decreased in PR');
-                      }
-                    } else {
-                      console.log('Could not compare coverage: no coverage files found');
-                    }

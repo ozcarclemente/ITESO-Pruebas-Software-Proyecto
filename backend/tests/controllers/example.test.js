@@ -1,5 +1,5 @@
-describe('Controllers', () => {
-  it('should handle controller action', () => {
-    expect(true).toBe(true);
-  });
+describe("Controllers", () => {
+    it("should handle controller action", () => {
+        expect(true).toBe(true);
+    });
 });

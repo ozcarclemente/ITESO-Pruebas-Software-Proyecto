@@ -1,5 +1,5 @@
-describe('Auth Context', () => {
-  it('should manage auth state', () => {
-    expect(true).toBe(true);
-  });
+describe("Auth Context", () => {
+    it("should manage auth state", () => {
+        expect(true).toBe(true);
+    });
 });

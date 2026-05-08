@@ -30,9 +30,10 @@ if (process.env.NODE_ENV === "production") {
 } else {
     app.get("/", (req, res) => res.json({ status: "API is running on /api" }));
 }
+
+app.use("/api/articles", articlesRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/articles", articlesRoutes);
 app.use("/api/profiles", profilesRoutes);
 app.use("/api/tags", tagsRoutes);
 app.get("/*any", (req, res) =>
@@ -40,6 +41,13 @@ app.get("/*any", (req, res) =>
 );
 app.use(errorHandler);
 
-app.listen(PORT, () =>
-    console.log(`Server running on http://localhost:${PORT}`),
-);
+/*
+if required by vitest we don't call .listen()
+*/
+if (require.main === module) {
+    app.listen(PORT, () =>
+        console.log(`Server running on http://localhost:${PORT}`),
+    );
+}
+
+module.exports = app; // export the app for supertest

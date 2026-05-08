@@ -1,5 +1,5 @@
-describe('Helper Functions', () => {
-  it('should validate input', () => {
-    expect(true).toBe(true);
-  });
+describe("Helper Functions", () => {
+    it("should validate input", () => {
+        expect(true).toBe(true);
+    });
 });

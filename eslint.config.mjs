@@ -30,6 +30,13 @@ export default defineConfig([
         },
     },
     {
+        files: ["backend/tests/**/*.js"],
+        languageOptions: {
+            sourceType: "module",
+            ecmaVersion: "latest",
+        },
+    },
+    {
         files: ["backend/migrations/**/*.js", "backend/seeders/**/*.js"],
         rules: {
             "no-unused-vars": ["error", { argsIgnorePattern: "^Sequelize$" }],

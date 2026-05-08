@@ -23,7 +23,7 @@ jobs:
             - name: Install root dependencies
               run: npm ci
               env:
-                HUSKY: 0
+                  HUSKY: 0
 
             - name: Run tests
               run: npm run test

@@ -1,5 +1,5 @@
-describe('Routes', () => {
-  it('should navigate correctly', () => {
-    expect(true).toBe(true);
-  });
+describe("Routes", () => {
+    it("should navigate correctly", () => {
+        expect(true).toBe(true);
+    });
 });

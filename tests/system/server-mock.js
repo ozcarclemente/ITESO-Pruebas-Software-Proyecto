@@ -2,14 +2,14 @@
 // Use this if you need to test locally without running the full backend + frontend
 // For GitHub Actions CI/CD, the system-tests workflow uses real servers with seeded data
 
-const express = require('express');
+const express = require("express");
 const app = express();
 
 app.use(express.json());
 
 // Mock home page
-app.get('/', (req, res) => {
-  res.send(`
+app.get("/", (req, res) => {
+    res.send(`
     <!DOCTYPE html>
     <html>
     <head>
@@ -76,106 +76,106 @@ app.get('/', (req, res) => {
 });
 
 // Mock API - Articles
-app.get('/api/articles', (req, res) => {
-  res.json({
-    articles: [
-      {
-        slug: 'how-to-train-your-dragon',
-        title: 'How to train your dragon',
-        description: 'Ever wonder how?',
-        body: 'It takes a Jacobian',
-        tagList: ['dragons', 'training'],
-        author: {
-          username: 'jake',
-          image: 'https://api.example.com/images/jake.jpg',
-          following: false,
-        },
-        createdAt: '2024-01-20T03:22:56.637Z',
-        updatedAt: '2024-01-20T03:48:35.824Z',
-        favorited: false,
-        favoritesCount: 0,
-      },
-    ],
-    articlesCount: 1,
-  });
+app.get("/api/articles", (req, res) => {
+    res.json({
+        articles: [
+            {
+                slug: "how-to-train-your-dragon",
+                title: "How to train your dragon",
+                description: "Ever wonder how?",
+                body: "It takes a Jacobian",
+                tagList: ["dragons", "training"],
+                author: {
+                    username: "jake",
+                    image: "https://api.example.com/images/jake.jpg",
+                    following: false,
+                },
+                createdAt: "2024-01-20T03:22:56.637Z",
+                updatedAt: "2024-01-20T03:48:35.824Z",
+                favorited: false,
+                favoritesCount: 0,
+            },
+        ],
+        articlesCount: 1,
+    });
 });
 
 // Mock API - Comments
-app.get('/api/articles/:slug/comments', (req, res) => {
-  res.json({
-    comments: [
-      {
-        id: 1,
-        createdAt: '2024-01-20T03:22:56.637Z',
-        updatedAt: '2024-01-20T03:22:56.637Z',
-        body: 'This is a great article!',
-        author: {
-          username: 'jake',
-          image: 'https://api.example.com/images/jake.jpg',
-          following: false,
-        },
-      },
-    ],
-  });
+app.get("/api/articles/:slug/comments", (req, res) => {
+    res.json({
+        comments: [
+            {
+                id: 1,
+                createdAt: "2024-01-20T03:22:56.637Z",
+                updatedAt: "2024-01-20T03:22:56.637Z",
+                body: "This is a great article!",
+                author: {
+                    username: "jake",
+                    image: "https://api.example.com/images/jake.jpg",
+                    following: false,
+                },
+            },
+        ],
+    });
 });
 
 // Mock API - Create comment
-app.post('/api/articles/:slug/comments', (req, res) => {
-  res.status(201).json({
-    comment: {
-      id: 2,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      body: req.body.comment.body,
-      author: {
-        username: 'testuser',
-        image: 'https://api.example.com/images/test.jpg',
-        following: false,
-      },
-    },
-  });
+app.post("/api/articles/:slug/comments", (req, res) => {
+    res.status(201).json({
+        comment: {
+            id: 2,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            body: req.body.comment.body,
+            author: {
+                username: "testuser",
+                image: "https://api.example.com/images/test.jpg",
+                following: false,
+            },
+        },
+    });
 });
 
 // Mock API - Auth
-app.post('/api/users/login', (req, res) => {
-  res.json({
-    user: {
-      email: req.body.user.email,
-      token: 'jwt.token.here',
-      username: 'testuser',
-      bio: 'Test user',
-      image: 'https://api.example.com/images/test.jpg',
-    },
-  });
+app.post("/api/users/login", (req, res) => {
+    res.json({
+        user: {
+            email: req.body.user.email,
+            token: "jwt.token.here",
+            username: "testuser",
+            bio: "Test user",
+            image: "https://api.example.com/images/test.jpg",
+        },
+    });
 });
 
-app.post('/api/users', (req, res) => {
-  res.status(201).json({
-    user: {
-      email: req.body.user.email,
-      token: 'jwt.token.here',
-      username: req.body.user.username,
-      bio: '',
-      image: 'https://api.example.com/images/default.jpg',
-    },
-  });
+app.post("/api/users", (req, res) => {
+    res.status(201).json({
+        user: {
+            email: req.body.user.email,
+            token: "jwt.token.here",
+            username: req.body.user.username,
+            bio: "",
+            image: "https://api.example.com/images/default.jpg",
+        },
+    });
 });
 
 // Healthcheck
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ errors: { body: ['Not Found'] } });
+    res.status(404).json({ errors: { body: ["Not Found"] } });
 });
 
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Mock server running on http://localhost:${PORT}`);
-  });
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Mock server running on http://localhost:${PORT}`);
+    });
 }
 
 module.exports = app;

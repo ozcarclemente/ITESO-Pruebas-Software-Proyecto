@@ -42,18 +42,18 @@ jobs:
             - name: Create .env file
               working-directory: ./backend
               run: |
-                cat > .env << 'EOF'
-                NODE_ENV=test
-                PORT=3001
-                TEST_DB_HOSTNAME=localhost
-                TEST_DB_USERNAME=postgres
-                TEST_DB_PASSWORD=postgres
-                TEST_DB_NAME=conduit_test
-                TEST_DB_DIALECT=postgres
-                TEST_DB_LOGGING=false
-                JWT_KEY=test_secret_key
-                EOF
-                echo ".env file created with test configuration"
+                  cat > .env << 'EOF'
+                  NODE_ENV=test
+                  PORT=3001
+                  TEST_DB_HOSTNAME=localhost
+                  TEST_DB_USERNAME=postgres
+                  TEST_DB_PASSWORD=postgres
+                  TEST_DB_NAME=conduit_test
+                  TEST_DB_DIALECT=postgres
+                  TEST_DB_LOGGING=false
+                  JWT_KEY=test_secret_key
+                  EOF
+                  echo ".env file created with test configuration"
 
             - name: Create test database
               run: npm run sqlz -- db:create
@@ -84,12 +84,12 @@ jobs:
             - name: Show application logs
               if: always()
               run: |
-                echo "=== Application Log ==="
-                cat /tmp/app.log || echo "No log file"
-                echo ""
-                echo "=== Test Results ==="
-                # Si cucumber genera log separado
-                cat /tmp/cucumber.log || echo "No cucumber log"
+                  echo "=== Application Log ==="
+                  cat /tmp/app.log || echo "No log file"
+                  echo ""
+                  echo "=== Test Results ==="
+                  # Si cucumber genera log separado
+                  cat /tmp/cucumber.log || echo "No cucumber log"
 
             - name: Stop application
               if: always()
