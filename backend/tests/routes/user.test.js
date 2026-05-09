@@ -2,7 +2,7 @@ const request = require("supertest");
 const express = require("express");
 
 // 1. Mockeamos el middleware de autenticación ANTES de requerir las rutas.
-// Usamos una variable mutable para poder cambiar el comportamiento del middleware 
+// Usamos una variable mutable para poder cambiar el comportamiento del middleware
 // dependiendo del test (por ejemplo, simular usuario logueado vs no autorizado).
 let mockAuthImplementation = (req, res, next) => next();
 
@@ -29,7 +29,6 @@ app.use(errorHandler);
 let server;
 
 describe("User Routes (Current User & Update) - Integration Tests", () => {
-    
     beforeAll((done) => {
         server = app.listen(0, done);
     });
@@ -51,18 +50,20 @@ describe("User Routes (Current User & Update) - Integration Tests", () => {
                     id: 1,
                     username: "testuser",
                     bio: "hello",
-                    image: null
+                    image: null,
                 },
-                get() { return this.dataValues; },
+                get() {
+                    return this.dataValues;
+                },
                 toJSON() {
                     return { ...this.get() };
-                }
+                },
             };
 
             mockAuthImplementation = (req, res, next) => {
                 req.loggedUser = mockLoggedUser;
                 // El controlador currentUser espera que el email venga en los headers por alguna razón
-                req.headers.email = "test@example.com"; 
+                req.headers.email = "test@example.com";
                 next();
             };
 
@@ -103,8 +104,12 @@ describe("User Routes (Current User & Update) - Integration Tests", () => {
                 bio: "oldbio",
                 dataValues: {},
                 save: jest.fn().mockResolvedValue(true),
-                get() { return { username: this.username, bio: this.bio }; },
-                toJSON() { return { ...this.get() }; }
+                get() {
+                    return { username: this.username, bio: this.bio };
+                },
+                toJSON() {
+                    return { ...this.get() };
+                },
             };
 
             mockAuthImplementation = (req, res, next) => {
@@ -115,8 +120,8 @@ describe("User Routes (Current User & Update) - Integration Tests", () => {
             const requestBody = {
                 user: {
                     username: "newusername",
-                    bio: "newbio"
-                }
+                    bio: "newbio",
+                },
             };
 
             // B. Acción
@@ -139,8 +144,12 @@ describe("User Routes (Current User & Update) - Integration Tests", () => {
                 password: "oldHashedPassword",
                 dataValues: {},
                 save: jest.fn().mockResolvedValue(true),
-                get() { return {}; },
-                toJSON() { return {}; }
+                get() {
+                    return {};
+                },
+                toJSON() {
+                    return {};
+                },
             };
 
             mockAuthImplementation = (req, res, next) => {
@@ -150,8 +159,8 @@ describe("User Routes (Current User & Update) - Integration Tests", () => {
 
             const requestBody = {
                 user: {
-                    password: "newPlainTextPassword"
-                }
+                    password: "newPlainTextPassword",
+                },
             };
 
             // B. Acción
