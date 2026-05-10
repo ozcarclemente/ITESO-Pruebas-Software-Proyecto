@@ -6,8 +6,12 @@
         "dev": "node --watch index.js",
         "sqlz": "npx sequelize-cli",
         "start": "node index.js",
-        "test": "jest",
-        "test:coverage": "jest --coverage"
+        "test": "jest --testPathIgnorePatterns=integration",
+        "test:coverage": "jest --testPathIgnorePatterns=integration --coverage",
+        "test:integration": "jest --testPathPattern=integration --runInBand",
+        "test:integration:coverage": "jest --testPathPattern=integration --coverage --runInBand",
+        "test:all": "npm run test && npm run test:integration",
+        "test:all:coverage": "jest --coverage"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
