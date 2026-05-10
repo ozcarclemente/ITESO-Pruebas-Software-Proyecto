@@ -1,0 +1,158 @@
+name: Integration Tests
+
+on:
+    push:
+        branches:
+            - integration-tests
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    integration-tests:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Create .env file
+              working-directory: ./backend
+              run: |
+                  cat > .env << 'EOF'
+                  NODE_ENV=development
+                  PORT=3001
+                  DEV_DB_HOSTNAME=localhost
+                  DEV_DB_USERNAME=postgres
+                  DEV_DB_PASSWORD=postgres
+                  DEV_DB_NAME=conduit_dev
+                  DEV_DB_DIALECT=postgres
+                  DEV_DB_LOGGING=false
+                  JWT_KEY=test_secret_key
+                  EOF
+                  echo ".env file created with development configuration"
+
+            - name: Create development database
+              run: npm run sqlz -- db:create
+
+            - name: Run migrations
+              run: npm run sqlz -- db:migrate
+
+            # - name: Seed database
+            #   run: npm run sqlz -- db:seed:all
+
+            # - name: Run integration tests
+            #   run: npm run test:integration
+            #   working-directory: ./backend
+
+            - name: Run integration tests with coverage
+              run: npm run test:integration:coverage
+              working-directory: ./backend
+
+            - name: Upload coverage reports
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: integration-coverage
+                  path: backend/coverage
+                  retention-days: 30
+
+            - name: Comment PR with integration coverage
+              if: github.event_name == 'pull_request' && always()
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fs = require('fs');
+
+                      function calculateSummary(coverageFile) {
+                        try {
+                          const coverage = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
+                          const totals = {
+                            statements: { covered: 0, total: 0, pct: 0 },
+                            branches: { covered: 0, total: 0, pct: 0 },
+                            functions: { covered: 0, total: 0, pct: 0 },
+                            lines: { covered: 0, total: 0, pct: 0 }
+                          };
+
+                          Object.values(coverage).forEach(file => {
+                            if (!file.s) return;
+                            const statements = Object.values(file.s || {});
+                            totals.statements.total += statements.length;
+                            totals.statements.covered += statements.filter(x => x > 0).length;
+
+                            const branches = Object.values(file.b || {});
+                            branches.forEach(branch => {
+                              if (Array.isArray(branch)) {
+                                totals.branches.total += branch.length;
+                                totals.branches.covered += branch.filter(x => x > 0).length;
+                              }
+                            });
+
+                            const functions = Object.values(file.f || {});
+                            totals.functions.total += functions.length;
+                            totals.functions.covered += functions.filter(x => x > 0).length;
+
+                            totals.lines.total += statements.length;
+                            totals.lines.covered += statements.filter(x => x > 0).length;
+                          });
+
+                          Object.keys(totals).forEach(metric => {
+                            totals[metric].pct = totals[metric].total > 0
+                              ? Math.round((totals[metric].covered / totals[metric].total) * 10000) / 100
+                              : 0;
+                          });
+
+                          return totals;
+                        } catch (error) {
+                          return null;
+                        }
+                      }
+
+                      const coverage = calculateSummary('backend/coverage/coverage-final.json');
+
+                      if (coverage) {
+                        const metrics = ['statements', 'branches', 'functions', 'lines'];
+                        let comment = '## 🧪 Integration Tests Coverage\n\n';
+                        comment += '| Metric | Coverage |\n';
+                        comment += '|--------|----------|\n';
+
+                        metrics.forEach(metric => {
+                          const pct = coverage[metric].pct;
+                          const icon = pct >= 80 ? '✨' : pct >= 60 ? '⚠️' : '❌';
+                          comment += `| ${metric} | ${icon} ${pct.toFixed(2)}% |\n`;
+                        });
+
+                        github.rest.issues.createComment({
+                          issue_number: context.issue.number,
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          body: comment
+                        });
+                      }
