@@ -6,7 +6,8 @@
         "dev": "node --watch index.js",
         "sqlz": "npx sequelize-cli",
         "start": "node index.js",
-        "test": "jest"
+        "test": "jest",
+        "test:coverage": "jest --coverage"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
