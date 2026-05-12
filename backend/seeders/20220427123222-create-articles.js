@@ -1,10 +1,11 @@
 "use strict";
 
-const { User } = require("../models");
+const { User, Tag } = require("../models");
 
 module.exports = {
     async up(queryInterface, Sequelize) {
         const users = await User.findAll();
+        const tags = await Tag.findAll();
 
         const articles = Array(55)
             .fill(null)
@@ -20,10 +21,25 @@ module.exports = {
                 updatedAt: new Date(),
             }));
 
-        await queryInterface.bulkInsert("Articles", articles, {});
+        const insertedArticles = await queryInterface.bulkInsert("Articles", articles, {
+            returning: true,
+        });
+
+        // Assign random tags to each article
+        const tagList = insertedArticles.map((article) => {
+            const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 tags per article
+            const shuffledTags = tags.sort(() => 0.5 - Math.random()).slice(0, numTags);
+            return shuffledTags.map((tag) => ({
+                articleId: article.id,
+                tagName: tag.name,
+            }));
+        }).flat();
+
+        await queryInterface.bulkInsert("TagList", tagList, {});
     },
 
     async down(queryInterface, Sequelize) {
+        await queryInterface.bulkDelete("TagList", null, {});
         await queryInterface.bulkDelete("Articles", null, {});
     },
 };
