@@ -10,6 +10,7 @@ const {
     singleArticle,
     updateArticle,
     deleteArticle,
+    articlesFeed,
 } = require("../../controllers/articles");
 const {
     NotFoundError,
@@ -334,6 +335,236 @@ describe("GET /api/articles/:slug", () => {
     });
 });
 
+describe("GET /api/articles (Pagination)", () => {
+    // tests for pagination with limit and offset
+
+    let mockReq;
+    let mockRes;
+    let mockNext;
+
+    beforeEach(() => {
+        mockRes = {
+            json: jest.fn().mockReturnThis(),
+            status: jest.fn().mockReturnThis(),
+        };
+        mockNext = jest.fn();
+        mockReq = {
+            loggedUser: {
+                id: 1,
+                username: "user1",
+                email: "email@test.com",
+                dataValues: {},
+                getFollowing: jest.fn().mockResolvedValue([]),
+                getFavorites: jest.fn().mockResolvedValue([]),
+                countFavorites: jest.fn().mockResolvedValue(0),
+            },
+            params: {},
+            query: {},
+            body: {},
+        };
+    });
+
+    it("should respect limit parameter", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [
+                {
+                    id: 1,
+                    slug: "article-1",
+                    title: "Article 1",
+                    userId: 1,
+                    dataValues: { Favorites: [] },
+                    author: { id: 1, username: "user1", dataValues: {} },
+                    tagList: [{ name: "test" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "test" }]),
+                },
+            ],
+            count: 100,
+        });
+
+        mockReq.query = { limit: 1, offset: 0 };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        expect(mockRes.json).toHaveBeenCalledWith(
+            expect.objectContaining({
+                articles: expect.arrayContaining([
+                    expect.objectContaining({ title: "Article 1" }),
+                ]),
+                articlesCount: 100,
+            }),
+        );
+    });
+
+    it("should calculate offset correctly with pagination", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [
+                {
+                    id: 3,
+                    slug: "article-3",
+                    title: "Article 3",
+                    userId: 1,
+                    dataValues: { Favorites: [] },
+                    author: { id: 1, username: "user1", dataValues: {} },
+                    tagList: [{ name: "test" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "test" }]),
+                },
+            ],
+            count: 10,
+        });
+
+        mockReq.query = { limit: 3, offset: 1 };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        // offset * limit = 1 * 3 = 3 (skip first 3 rows)
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                limit: 3,
+                offset: 3,
+            }),
+        );
+    });
+
+    it("should use default limit of 3 when not provided", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [],
+            count: 0,
+        });
+
+        mockReq.query = { offset: 0 };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                limit: 3,
+            }),
+        );
+    });
+});
+
+describe("GET /api/articles (Filters)", () => {
+    // tests for filtering articles
+
+    let mockReq;
+    let mockRes;
+    let mockNext;
+
+    beforeEach(() => {
+        mockRes = {
+            json: jest.fn().mockReturnThis(),
+            status: jest.fn().mockReturnThis(),
+        };
+        mockNext = jest.fn();
+        mockReq = {
+            loggedUser: {
+                id: 1,
+                username: "user1",
+                email: "email@test.com",
+                dataValues: {},
+                getFollowing: jest.fn().mockResolvedValue([]),
+                getFavorites: jest.fn().mockResolvedValue([]),
+                countFavorites: jest.fn().mockResolvedValue(0),
+            },
+            params: {},
+            query: {},
+            body: {},
+        };
+    });
+
+    it("should filter articles by author", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [
+                {
+                    id: 1,
+                    slug: "author-article",
+                    title: "Author Article",
+                    userId: 2,
+                    dataValues: { Favorites: [] },
+                    author: { id: 2, username: "author1", dataValues: {} },
+                    tagList: [{ name: "test" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "test" }]),
+                },
+            ],
+            count: 1,
+        });
+
+        mockReq.query = { author: "author1" };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                include: expect.arrayContaining([
+                    expect.objectContaining({
+                        where: { username: "author1" },
+                    }),
+                ]),
+            }),
+        );
+    });
+
+    it("should filter articles by tag", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [
+                {
+                    id: 1,
+                    slug: "tagged-article",
+                    title: "Tagged Article",
+                    userId: 1,
+                    dataValues: { Favorites: [] },
+                    author: { id: 1, username: "user1", dataValues: {} },
+                    tagList: [{ name: "javascript" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "javascript" }]),
+                },
+            ],
+            count: 1,
+        });
+
+        mockReq.query = { tag: "javascript" };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                include: expect.arrayContaining([
+                    expect.objectContaining({
+                        where: { name: "javascript" },
+                    }),
+                ]),
+            }),
+        );
+    });
+
+    it("should filter articles favorited by a user", async () => {
+        const mockUser = {
+            getFavorites: jest.fn().mockResolvedValue([
+                {
+                    id: 1,
+                    slug: "favorited-article",
+                    title: "Favorited Article",
+                    userId: 2,
+                    dataValues: { Favorites: [] },
+                    author: { id: 2, username: "author1", dataValues: {} },
+                    tagList: [{ name: "test" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "test" }]),
+                },
+            ]),
+            countFavorites: jest.fn().mockResolvedValue(1),
+        };
+
+        const { User } = require("../../models");
+        User.findOne.mockResolvedValue(mockUser);
+
+        mockReq.query = { favorited: "user2" };
+
+        await allArticles(mockReq, mockRes, mockNext);
+
+        expect(User.findOne).toHaveBeenCalledWith({ where: { username: "user2" } });
+        expect(mockUser.getFavorites).toHaveBeenCalled();
+    });
+});
+
 describe("PUT /api/articles/:slug", () => {
     // tests for UPDATE operations
 
@@ -434,6 +665,156 @@ describe("PUT /api/articles/:slug", () => {
         const err = mockNext.mock.calls[0][0];
         expect(err).toBeInstanceOf(ForbiddenError);
         expect(err.message).toBe("You are not the author of this article");
+    });
+});
+
+describe("GET /api/articles/feed (Feed with Pagination)", () => {
+    // tests for articles feed from followed users
+
+    let mockReq;
+    let mockRes;
+    let mockNext;
+
+    beforeEach(() => {
+        mockRes = {
+            json: jest.fn().mockReturnThis(),
+            status: jest.fn().mockReturnThis(),
+        };
+        mockNext = jest.fn();
+        mockReq = {
+            loggedUser: {
+                id: 1,
+                username: "user1",
+                email: "email@test.com",
+                dataValues: {},
+                getFollowing: jest.fn().mockResolvedValue([
+                    { id: 2, username: "author1" },
+                    { id: 3, username: "author2" },
+                ]),
+                getFavorites: jest.fn().mockResolvedValue([]),
+                countFavorites: jest.fn().mockResolvedValue(0),
+            },
+            params: {},
+            query: {},
+            body: {},
+        };
+    });
+
+    it("should return feed articles from followed users", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [
+                {
+                    id: 1,
+                    slug: "followed-article",
+                    title: "Followed Article",
+                    userId: 2,
+                    dataValues: { Favorites: [] },
+                    author: { id: 2, username: "author1", dataValues: {} },
+                    tagList: [{ name: "test" }],
+                    getTagList: jest.fn().mockResolvedValue([{ name: "test" }]),
+                },
+            ],
+            count: 1,
+        });
+
+        mockReq.query = { limit: 10, offset: 0 };
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: { userId: [2, 3] },
+            }),
+        );
+        expect(mockRes.json).toHaveBeenCalledWith(
+            expect.objectContaining({
+                articlesCount: 1,
+            }),
+        );
+    });
+
+    it("should respect limit in feed", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [],
+            count: 0,
+        });
+
+        mockReq.query = { limit: 5, offset: 0 };
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                limit: 5,
+                offset: 0,
+            }),
+        );
+    });
+
+    it("should calculate offset correctly in feed", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [],
+            count: 0,
+        });
+
+        mockReq.query = { limit: 5, offset: 2 };
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        // offset * limit = 2 * 5 = 10
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                limit: 5,
+                offset: 10,
+            }),
+        );
+    });
+
+    it("should use default limit of 3 in feed", async () => {
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [],
+            count: 0,
+        });
+
+        mockReq.query = { offset: 0 };
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                limit: 3,
+            }),
+        );
+    });
+
+    it("should fail if user not logged in", async () => {
+        mockReq.loggedUser = null;
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        const err = mockNext.mock.calls[0][0];
+        expect(err).toBeInstanceOf(UnauthorizedError);
+    });
+
+    it("should return empty feed if user follows no one", async () => {
+        mockReq.loggedUser.getFollowing.mockResolvedValue([]);
+
+        Article.findAndCountAll.mockResolvedValue({
+            rows: [],
+            count: 0,
+        });
+
+        await articlesFeed(mockReq, mockRes, mockNext);
+
+        expect(Article.findAndCountAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: { userId: [] },
+            }),
+        );
+        expect(mockRes.json).toHaveBeenCalledWith({
+            articles: [],
+            articlesCount: 0,
+        });
     });
 });
 
