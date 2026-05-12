@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, beforeEach } from "@jest/globals";
 import ArticlesPagination from "../../src/components/ArticlesPagination";
 

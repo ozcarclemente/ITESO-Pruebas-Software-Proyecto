@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, beforeEach } from "@jest/globals";
 import ArticlesPreview from "../../src/components/ArticlesPreview";
 
@@ -7,7 +7,7 @@ jest.mock("react-router-dom", () => ({
 }));
 
 jest.mock("../../src/components/ArticleMeta", () => {
-    return function MockArticleMeta({ author, children }) {
+    return function MockArticleMeta({ children }) {
         return <div data-testid="article-meta">{children}</div>;
     };
 });

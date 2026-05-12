@@ -81,7 +81,7 @@ describe("Articles Routes Integration Tests", () => {
         app.use("/api/articles", articleRouter);
 
         // Error handler
-        app.use((err, req, res, next) => {
+        app.use((err, req, res, _next) => {
             res.status(err.status || 400).json({
                 errors: { body: [err.message] },
             });
@@ -240,19 +240,7 @@ describe("Articles Routes Integration Tests", () => {
 
     describe("GET /api/articles/feed (User Feed)", () => {
         it("should return feed articles from followed users", async () => {
-            const { Article, User } = require("../../models");
-
-            // Mock logged user with following
-            const mockLoggedUser = {
-                id: 1,
-                username: "testuser",
-                getFollowing: jest.fn().mockResolvedValue([
-                    { id: 2, username: "author1" },
-                    { id: 3, username: "author2" },
-                ]),
-                getFavorites: jest.fn().mockResolvedValue([]),
-                countFavorites: jest.fn().mockResolvedValue(0),
-            };
+            const { Article } = require("../../models");
 
             Article.findAndCountAll.mockResolvedValue({
                 rows: [
