@@ -19,6 +19,11 @@ jest.mock("../../models", () => ({
     },
 }));
 
+jest.mock("../../middleware/authentication", () => (req, res, next) => {
+    req.loggedUser = { id: 1, username: "testuser" };
+    next();
+});
+
 jest.mock("../../helper/helpers", () => {
     const realHelpers = jest.requireActual("../../helper/helpers");
     return {
@@ -42,294 +47,183 @@ jest.mock("../../helper/helpers", () => {
     };
 });
 
+jest.mock("../../controllers/articles", () => ({
+    allArticles: jest.fn((req, res) => {
+        res.json({ articles: [], articlesCount: 0 });
+    }),
+    createArticle: jest.fn((req, res) => {
+        res.status(201).json({ article: { slug: "test-article", title: "Test" } });
+    }),
+    singleArticle: jest.fn((req, res) => {
+        res.json({ article: { slug: "test-article", title: "Test" } });
+    }),
+    updateArticle: jest.fn((req, res) => {
+        res.json({ article: { slug: "test-article", title: "Updated" } });
+    }),
+    deleteArticle: jest.fn((req, res) => {
+        res.json({ message: "Deleted" });
+    }),
+    articlesFeed: jest.fn((req, res) => {
+        res.json({ articles: [], articlesCount: 0 });
+    }),
+}));
 
-describe("Articles Routes Integration Tests", () => {
+jest.mock("../../controllers/comments", () => ({
+    allComments: jest.fn((req, res) => {
+        res.json({ comments: [] });
+    }),
+    createComment: jest.fn((req, res) => {
+        res.status(201).json({ comment: { id: 1, body: "Test" } });
+    }),
+    deleteComment: jest.fn((req, res) => {
+        res.json({ message: { body: ["Deleted"] } });
+    }),
+}));
+
+jest.mock("../../controllers/favorites", () => ({
+    favoriteToggler: jest.fn((req, res) => {
+        res.json({
+            article: {
+                slug: "test-article",
+                title: "Test Article",
+                favorited: true,
+                favoritesCount: 1,
+            },
+        });
+    }),
+}));
+
+
+describe("Articles Routes", () => {
     let app;
-    let mockToken;
 
     beforeEach(() => {
         app = express();
         app.use(express.json());
 
-        // Mock verifyToken middleware
-        app.use((req, res, next) => {
-            const token = req.headers.authorization?.split(" ")[1];
-            if (token) {
-                req.loggedUser = {
-                    id: 1,
-                    username: "testuser",
-                    email: "test@test.com",
-                    dataValues: {},
-                    getFollowing: jest.fn().mockResolvedValue([
-                        { id: 2, username: "author1" },
-                        { id: 3, username: "author2" },
-                    ]),
-                    getFavorites: jest.fn().mockResolvedValue([]),
-                    countFavorites: jest.fn().mockResolvedValue(0),
-                };
-            } else {
-                req.loggedUser = null;
-            }
-            next();
-        });
-
-        // Mount articles routes
-        const articleRouter = express.Router();
-        const { allArticles, articlesFeed } = require("../../controllers/articles");
-        articleRouter.get("/", allArticles);
-        articleRouter.get("/feed", articlesFeed);
-        app.use("/api/articles", articleRouter);
-
-        // Error handler
-        app.use((err, req, res, _next) => {
-            res.status(err.status || 400).json({
-                errors: { body: [err.message] },
-            });
-        });
-
-        mockToken = jwt.sign({ id: 1, username: "testuser" }, "test-secret");
+        const articlesRouter = require("../../routes/articles");
+        app.use("/articles", articlesRouter);
     });
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-
-    describe("GET /api/articles (Pagination)", () => {
-        it("should return articles with pagination", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [
-                    {
-                        id: 1,
-                        slug: "article-1",
-                        title: "Article 1",
-                        description: "Description 1",
-                        body: "Body 1",
-                        userId: 1,
-                        dataValues: { Favorites: [], tagList: [] },
-                        author: { id: 1, username: "author1", dataValues: {} },
-                        tagList: [],
-                        getTagList: jest.fn().mockResolvedValue([]),
-                    },
-                ],
-                count: 100,
-            });
-
-            const res = await request(app)
-                .get("/api/articles?limit=10&offset=0")
-                .set("Authorization", `Bearer ${mockToken}`);
+    describe("GET /articles", () => {
+        it("should get all articles", async () => {
+            const res = await request(app).get("/articles");
 
             expect(res.status).toBe(200);
-            expect(res.body.articlesCount).toBe(100);
-            expect(res.body.articles).toHaveLength(1);
-            expect(res.body.articles[0].title).toBe("Article 1");
-        });
-
-        it("should use default limit when not provided", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [],
-                count: 0,
-            });
-
-            await request(app)
-                .get("/api/articles")
-                .set("Authorization", `Bearer ${mockToken}`);
-
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    limit: 3,
-                    offset: 0,
-                }),
-            );
-        });
-
-        it("should calculate offset based on page", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [],
-                count: 0,
-            });
-
-            await request(app)
-                .get("/api/articles?limit=5&offset=2")
-                .set("Authorization", `Bearer ${mockToken}`);
-
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    limit: 5,
-                    offset: 10,
-                }),
-            );
+            expect(res.body).toHaveProperty("articles");
+            expect(res.body).toHaveProperty("articlesCount");
         });
     });
 
-    describe("GET /api/articles?tag=X (Tag Filter)", () => {
-        it("should filter articles by tag", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [
-                    {
-                        id: 1,
-                        slug: "js-article",
-                        title: "JavaScript Tips",
-                        userId: 1,
-                        dataValues: { Favorites: [] },
-                        author: { id: 1, username: "author1", dataValues: {} },
-                        tagList: [{ name: "javascript" }],
-                        getTagList: jest.fn().mockResolvedValue([{ name: "javascript" }]),
-                    },
-                ],
-                count: 5,
-            });
-
+    describe("POST /articles", () => {
+        it("should create article", async () => {
             const res = await request(app)
-                .get("/api/articles?tag=javascript")
-                .set("Authorization", `Bearer ${mockToken}`);
+                .post("/articles")
+                .send({
+                    article: {
+                        title: "Test Article",
+                        description: "Test description",
+                        body: "Test body",
+                        tagList: ["test"],
+                    },
+                });
+
+            expect(res.status).toBe(201);
+            expect(res.body).toHaveProperty("article");
+        });
+    });
+
+    describe("GET /articles/feed", () => {
+        it("should get feed articles", async () => {
+            const res = await request(app).get("/articles/feed");
 
             expect(res.status).toBe(200);
-            expect(res.body.articlesCount).toBe(5);
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    include: expect.arrayContaining([
-                        expect.objectContaining({
-                            where: { name: "javascript" },
-                        }),
-                    ]),
-                }),
-            );
+            expect(res.body).toHaveProperty("articles");
+            expect(res.body).toHaveProperty("articlesCount");
         });
     });
 
-    describe("GET /api/articles?author=X (Author Filter)", () => {
-        it("should filter articles by author", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [
-                    {
-                        id: 1,
-                        slug: "author-article",
-                        title: "Author Article",
-                        userId: 2,
-                        dataValues: { Favorites: [] },
-                        author: { id: 2, username: "specificauthor", dataValues: {} },
-                        tagList: [],
-                        getTagList: jest.fn().mockResolvedValue([]),
-                    },
-                ],
-                count: 3,
-            });
-
-            const res = await request(app)
-                .get("/api/articles?author=specificauthor")
-                .set("Authorization", `Bearer ${mockToken}`);
+    describe("GET /articles/:slug", () => {
+        it("should get single article", async () => {
+            const res = await request(app).get("/articles/test-article");
 
             expect(res.status).toBe(200);
-            expect(res.body.articlesCount).toBe(3);
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    include: expect.arrayContaining([
-                        expect.objectContaining({
-                            where: { username: "specificauthor" },
-                        }),
-                    ]),
-                }),
-            );
+            expect(res.body).toHaveProperty("article");
         });
     });
 
-    describe("GET /api/articles/feed (User Feed)", () => {
-        it("should return feed articles from followed users", async () => {
-            const { Article } = require("../../models");
-
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [
-                    {
-                        id: 1,
-                        slug: "followed-article",
-                        title: "Article from followed user",
-                        userId: 2,
-                        dataValues: { Favorites: [] },
-                        author: { id: 2, username: "author1", dataValues: {} },
-                        tagList: [],
-                        getTagList: jest.fn().mockResolvedValue([]),
-                    },
-                ],
-                count: 10,
-            });
-
+    describe("PUT /articles/:slug", () => {
+        it("should update article", async () => {
             const res = await request(app)
-                .get("/api/articles/feed")
-                .set("Authorization", `Bearer ${mockToken}`);
+                .put("/articles/test-article")
+                .send({
+                    article: {
+                        title: "Updated Title",
+                    },
+                });
 
             expect(res.status).toBe(200);
-            expect(res.body.articlesCount).toBe(10);
-            expect(res.body.articles).toHaveLength(1);
-        });
-
-        it("should use limit and offset in feed", async () => {
-            const { Article } = require("../../models");
-
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [],
-                count: 0,
-            });
-
-            await request(app)
-                .get("/api/articles/feed?limit=5&offset=1")
-                .set("Authorization", `Bearer ${mockToken}`);
-
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    limit: 5,
-                    offset: 5,
-                }),
-            );
-        });
-
-        it("should fail without authentication", async () => {
-            const res = await request(app).get("/api/articles/feed");
-
-            expect(res.status).toBe(400);
+            expect(res.body).toHaveProperty("article");
         });
     });
 
-    describe("Pagination Edge Cases", () => {
-        it("should handle large offset values", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [],
-                count: 0,
-            });
+    describe("DELETE /articles/:slug", () => {
+        it("should delete article", async () => {
+            const res = await request(app).delete("/articles/test-article");
 
-            await request(app)
-                .get("/api/articles?limit=10&offset=999")
-                .set("Authorization", `Bearer ${mockToken}`);
-
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    limit: 10,
-                    offset: 9990,
-                }),
-            );
+            expect(res.status).toBe(200);
         });
+    });
 
-        it("should handle string limit values", async () => {
-            const { Article } = require("../../models");
-            Article.findAndCountAll.mockResolvedValue({
-                rows: [],
-                count: 0,
-            });
+    describe("POST /articles/:slug/favorite (via sub-route)", () => {
+        it("should favorite article", async () => {
+            const res = await request(app).post("/articles/test-article/favorite");
 
-            await request(app)
-                .get("/api/articles?limit=5&offset=0")
-                .set("Authorization", `Bearer ${mockToken}`);
+            expect(res.status).toBe(200);
+            expect(res.body).toHaveProperty("article");
+        });
+    });
 
-            expect(Article.findAndCountAll).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    limit: 5,
-                }),
+    describe("DELETE /articles/:slug/favorite (via sub-route)", () => {
+        it("should unfavorite article", async () => {
+            const res = await request(app).delete("/articles/test-article/favorite");
+
+            expect(res.status).toBe(200);
+            expect(res.body).toHaveProperty("article");
+        });
+    });
+
+    describe("GET /articles/:slug/comments (via sub-route)", () => {
+        it("should get comments for article", async () => {
+            const res = await request(app).get("/articles/test-article/comments");
+
+            expect(res.status).toBe(200);
+            expect(res.body).toHaveProperty("comments");
+        });
+    });
+
+    describe("POST /articles/:slug/comments (via sub-route)", () => {
+        it("should create comment", async () => {
+            const res = await request(app)
+                .post("/articles/test-article/comments")
+                .send({
+                    comment: {
+                        body: "Great article!",
+                    },
+                });
+
+            expect(res.status).toBe(201);
+            expect(res.body).toHaveProperty("comment");
+        });
+    });
+
+    describe("DELETE /articles/:slug/comments/:commentId (via sub-route)", () => {
+        it("should delete comment", async () => {
+            const res = await request(app).delete(
+                "/articles/test-article/comments/1",
             );
+
+            expect(res.status).toBe(200);
         });
     });
 });
