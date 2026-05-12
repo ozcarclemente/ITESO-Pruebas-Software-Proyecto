@@ -45,7 +45,7 @@ jobs:
             - name: Copy PR coverage
               run: |
                   mkdir -p coverage-pr/backend coverage-pr/frontend
-                  cp pr/coverage/coverage-final.json coverage-pr/backend/ 2>/dev/null || echo "No PR backend coverage found"
+                  cp pr/backend/coverage/coverage-final.json coverage-pr/backend/ 2>/dev/null || echo "No PR backend coverage found"
                   cp pr/frontend/coverage/coverage-final.json coverage-pr/frontend/ 2>/dev/null || echo "No PR frontend coverage found"
 
             - name: Install dependencies (main)
@@ -59,7 +59,7 @@ jobs:
             - name: Copy main coverage
               run: |
                   mkdir -p coverage-main/backend coverage-main/frontend
-                  cp main/coverage/coverage-final.json coverage-main/backend/ 2>/dev/null || echo "No main backend coverage found"
+                  cp main/backend/coverage/coverage-final.json coverage-main/backend/ 2>/dev/null || echo "No main backend coverage found"
                   cp main/frontend/coverage/coverage-final.json coverage-main/frontend/ 2>/dev/null || echo "No main frontend coverage found"
 
             - name: Verify coverage files exist
@@ -67,13 +67,13 @@ jobs:
                   echo "Checking main backend coverage..."
                   if [ ! -f coverage-main/backend/coverage-final.json ]; then
                     echo "❌ Main backend coverage file not found"
-                    ls -la main/coverage/ 2>/dev/null || echo "No main/coverage directory"
+                    ls -la main/backend/coverage/ 2>/dev/null || echo "No main/backend/coverage directory"
                     exit 1
                   fi
                   echo "Checking PR backend coverage..."
                   if [ ! -f coverage-pr/backend/coverage-final.json ]; then
                     echo "❌ PR backend coverage file not found"
-                    ls -la pr/coverage/ 2>/dev/null || echo "No pr/coverage directory"
+                    ls -la pr/backend/coverage/ 2>/dev/null || echo "No pr/backend/coverage directory"
                     exit 1
                   fi
                   echo "Checking main frontend coverage..."
@@ -161,7 +161,7 @@ jobs:
                       const frontendMain = calculateSummary('coverage-main/frontend/coverage-final.json');
                       const frontendPr = calculateSummary('coverage-pr/frontend/coverage-final.json');
 
-                      let comment = '## 📊 Coverage Comparison (main vs PR)\n\n';
+                      let comment = '## 📊 Unit Tests Coverage Comparison (main vs PR)\n\n';
                       let overallDecreased = false;
 
                       if (backendMain && backendPr) {
