@@ -43,8 +43,10 @@ Given("I navigate to the home page for favorites", async function () {
     await page.goto("http://localhost:3000/");
     await page.waitForSelector(".article-preview");
     // Verify we're on Global Feed
-    await page.waitForSelector('button.nav-link.active');
-    const activeTab = await page.locator('button.nav-link.active').textContent();
+    await page.waitForSelector("button.nav-link.active");
+    const activeTab = await page
+        .locator("button.nav-link.active")
+        .textContent();
     if (!activeTab.includes("Global Feed")) {
         await page.click('button:has-text("Global Feed")');
         await page.waitForTimeout(500);
@@ -53,7 +55,11 @@ Given("I navigate to the home page for favorites", async function () {
 
 When("I click the favorite button on an article", async function () {
     // Get first article preview, find button with ion-heart icon
-    const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
+    const favButton = page
+        .locator(".article-preview")
+        .first()
+        .locator("button")
+        .filter({ has: page.locator("i.ion-heart") });
 
     const countBefore = await favButton.locator(".counter").innerText();
     this.countBefore = parseInt(countBefore.replace(/[() ]/g, ""));
@@ -64,32 +70,54 @@ When("I click the favorite button on an article", async function () {
 When(
     "I click the favorite button on the same article again",
     async function () {
-        const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
+        const favButton = page
+            .locator(".article-preview")
+            .first()
+            .locator("button")
+            .filter({ has: page.locator("i.ion-heart") });
         await favButton.click();
         await page.waitForTimeout(2000);
     },
 );
 
 Then("the favorite button should be active", async function () {
-    const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
+    const favButton = page
+        .locator(".article-preview")
+        .first()
+        .locator("button")
+        .filter({ has: page.locator("i.ion-heart") });
     await expect(favButton).toHaveClass(/active/);
 });
 
 Then("the favorite button should be inactive", async function () {
-    const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
-    const hasActive = await favButton.evaluate((el) => el.classList.contains("active"));
+    const favButton = page
+        .locator(".article-preview")
+        .first()
+        .locator("button")
+        .filter({ has: page.locator("i.ion-heart") });
+    const hasActive = await favButton.evaluate((el) =>
+        el.classList.contains("active"),
+    );
     expect(hasActive).toBe(false);
 });
 
 Then("the favorites count should increase", async function () {
-    const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
+    const favButton = page
+        .locator(".article-preview")
+        .first()
+        .locator("button")
+        .filter({ has: page.locator("i.ion-heart") });
     const countAfter = await favButton.locator(".counter").innerText();
     const count = parseInt(countAfter.replace(/[() ]/g, ""));
     expect(count).toBeGreaterThan(this.countBefore);
 });
 
 Then("the favorites count should decrease", async function () {
-    const favButton = page.locator(".article-preview").first().locator("button").filter({ has: page.locator("i.ion-heart") });
+    const favButton = page
+        .locator(".article-preview")
+        .first()
+        .locator("button")
+        .filter({ has: page.locator("i.ion-heart") });
     const countAfter = await favButton.locator(".counter").innerText();
     const count = parseInt(countAfter.replace(/[() ]/g, ""));
     expect(count).toBe(this.countBefore - 1);

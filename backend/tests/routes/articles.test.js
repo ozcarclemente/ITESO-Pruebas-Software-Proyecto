@@ -51,7 +51,9 @@ jest.mock("../../controllers/articles", () => ({
         res.json({ articles: [], articlesCount: 0 });
     }),
     createArticle: jest.fn((req, res) => {
-        res.status(201).json({ article: { slug: "test-article", title: "Test" } });
+        res.status(201).json({
+            article: { slug: "test-article", title: "Test" },
+        });
     }),
     singleArticle: jest.fn((req, res) => {
         res.json({ article: { slug: "test-article", title: "Test" } });
@@ -91,7 +93,6 @@ jest.mock("../../controllers/favorites", () => ({
         });
     }),
 }));
-
 
 describe("Articles Routes", () => {
     let app;
@@ -176,7 +177,9 @@ describe("Articles Routes", () => {
 
     describe("POST /articles/:slug/favorite (via sub-route)", () => {
         it("should favorite article", async () => {
-            const res = await request(app).post("/articles/test-article/favorite");
+            const res = await request(app).post(
+                "/articles/test-article/favorite",
+            );
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("article");
@@ -185,7 +188,9 @@ describe("Articles Routes", () => {
 
     describe("DELETE /articles/:slug/favorite (via sub-route)", () => {
         it("should unfavorite article", async () => {
-            const res = await request(app).delete("/articles/test-article/favorite");
+            const res = await request(app).delete(
+                "/articles/test-article/favorite",
+            );
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("article");
@@ -194,7 +199,9 @@ describe("Articles Routes", () => {
 
     describe("GET /articles/:slug/comments (via sub-route)", () => {
         it("should get comments for article", async () => {
-            const res = await request(app).get("/articles/test-article/comments");
+            const res = await request(app).get(
+                "/articles/test-article/comments",
+            );
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("comments");

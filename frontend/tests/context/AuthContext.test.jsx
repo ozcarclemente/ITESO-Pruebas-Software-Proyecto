@@ -47,7 +47,9 @@ describe("AuthContext", () => {
                 </AuthProvider>,
             );
 
-            expect(screen.getByTestId("headers")).toHaveTextContent("not-authed");
+            expect(screen.getByTestId("headers")).toHaveTextContent(
+                "not-authed",
+            );
             expect(screen.getByTestId("isAuth")).toHaveTextContent("false");
         });
 
@@ -133,7 +135,9 @@ describe("AuthContext", () => {
 
     describe("useAuth hook", () => {
         it("should throw error when useAuth is called outside of AuthProvider", () => {
-            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            const consoleSpy = jest
+                .spyOn(console, "error")
+                .mockImplementation();
 
             expect(() => {
                 render(<TestComponent />);

@@ -78,7 +78,9 @@ describe("ProfileArticles Route", () => {
             render(<ProfileArticles />);
 
             expect(screen.getByTestId("articles-preview")).toBeInTheDocument();
-            expect(screen.getByTestId("articles-pagination")).toBeInTheDocument();
+            expect(
+                screen.getByTestId("articles-pagination"),
+            ).toBeInTheDocument();
         });
 
         it("should display both ArticlesPreview and ArticlesPagination", () => {
@@ -93,7 +95,9 @@ describe("ProfileArticles Route", () => {
             render(<ProfileArticles />);
 
             expect(screen.getByTestId("articles-preview")).toBeInTheDocument();
-            expect(screen.getByTestId("articles-pagination")).toBeInTheDocument();
+            expect(
+                screen.getByTestId("articles-pagination"),
+            ).toBeInTheDocument();
         });
     });
 
@@ -228,7 +232,9 @@ describe("ProfileArticles Route", () => {
 
             render(<ProfileArticles />);
 
-            expect(screen.getByTestId("articles-pagination")).toBeInTheDocument();
+            expect(
+                screen.getByTestId("articles-pagination"),
+            ).toBeInTheDocument();
         });
     });
 
@@ -244,7 +250,9 @@ describe("ProfileArticles Route", () => {
 
             const { container } = render(<ProfileArticles />);
 
-            expect(container.querySelector(".article-preview")).toBeInTheDocument();
+            expect(
+                container.querySelector(".article-preview"),
+            ).toBeInTheDocument();
         });
     });
 });

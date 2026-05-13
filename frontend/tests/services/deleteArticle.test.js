@@ -33,7 +33,7 @@ describe("deleteArticle Service", () => {
             expect.objectContaining({
                 method: "DELETE",
                 url: "api/articles/how-to-train-your-dragon/",
-            })
+            }),
         );
     });
 
@@ -48,7 +48,7 @@ describe("deleteArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 method: "DELETE",
-            })
+            }),
         );
     });
 
@@ -63,7 +63,7 @@ describe("deleteArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 url: "api/articles/my-article/",
-            })
+            }),
         );
     });
 
@@ -80,7 +80,7 @@ describe("deleteArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 headers: customHeaders,
-            })
+            }),
         );
     });
 
@@ -105,11 +105,7 @@ describe("deleteArticle Service", () => {
     it("should handle different slug formats", async () => {
         axios.mockResolvedValue({ data: {} });
 
-        const slugs = [
-            "simple-slug",
-            "slug-with-many-words-here",
-            "slug123",
-        ];
+        const slugs = ["simple-slug", "slug-with-many-words-here", "slug123"];
 
         for (const slug of slugs) {
             jest.clearAllMocks();
@@ -123,7 +119,7 @@ describe("deleteArticle Service", () => {
             expect(axios).toHaveBeenCalledWith(
                 expect.objectContaining({
                     url: `api/articles/${slug}/`,
-                })
+                }),
             );
         }
     });

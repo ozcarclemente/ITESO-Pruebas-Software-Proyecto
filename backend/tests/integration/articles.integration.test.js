@@ -33,7 +33,9 @@ describe("Articles Routes Integration Tests", () => {
 
             expect(response.status).toBe(201);
             expect(response.body.article.title).toBe("Test Article");
-            expect(response.body.article.author.username).toBe(testUser.username);
+            expect(response.body.article.author.username).toBe(
+                testUser.username,
+            );
             expect(response.body.article.token).toBeUndefined();
         });
 
@@ -146,7 +148,11 @@ describe("Articles Routes Integration Tests", () => {
                 .set("Authorization", `Bearer ${authToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body.articles.every(a => a.author.username === testUser.username)).toBe(true);
+            expect(
+                response.body.articles.every(
+                    (a) => a.author.username === testUser.username,
+                ),
+            ).toBe(true);
         });
 
         it("respects limit and offset", async () => {
@@ -166,8 +172,7 @@ describe("Articles Routes Integration Tests", () => {
         it("works without auth", async () => {
             await seedArticle(testUser.id);
 
-            const response = await request(app)
-                .get("/api/articles");
+            const response = await request(app).get("/api/articles");
 
             expect(response.status).toBe(200);
         });
@@ -184,7 +189,9 @@ describe("Articles Routes Integration Tests", () => {
                 .set("Authorization", `Bearer ${authToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body.articles.some(a => a.slug === article.slug)).toBe(true);
+            expect(
+                response.body.articles.some((a) => a.slug === article.slug),
+            ).toBe(true);
         });
 
         it("excludes articles from non-followed users", async () => {
@@ -200,8 +207,7 @@ describe("Articles Routes Integration Tests", () => {
         });
 
         it("requires auth", async () => {
-            const response = await request(app)
-                .get("/api/articles/feed");
+            const response = await request(app).get("/api/articles/feed");
 
             expect(response.status).toBe(401);
         });
@@ -209,7 +215,9 @@ describe("Articles Routes Integration Tests", () => {
 
     describe("GET /api/articles/:slug", () => {
         it("returns article by slug", async () => {
-            const article = await seedArticle(testUser.id, { slug: "test-slug" });
+            const article = await seedArticle(testUser.id, {
+                slug: "test-slug",
+            });
 
             const response = await request(app)
                 .get("/api/articles/test-slug")
@@ -231,8 +239,9 @@ describe("Articles Routes Integration Tests", () => {
         it("works without auth", async () => {
             await seedArticle(testUser.id, { slug: "public-slug" });
 
-            const response = await request(app)
-                .get("/api/articles/public-slug");
+            const response = await request(app).get(
+                "/api/articles/public-slug",
+            );
 
             expect(response.status).toBe(200);
         });
@@ -255,7 +264,6 @@ describe("Articles Routes Integration Tests", () => {
             expect(response.status).toBe(200);
             expect(response.body.article.title).toBe("Updated Title");
         });
-
 
         it("returns 404 for nonexistent article", async () => {
             const response = await request(app)
@@ -298,7 +306,6 @@ describe("Articles Routes Integration Tests", () => {
             expect(checkResponse.status).toBe(404);
         });
 
-
         it("returns 404 for nonexistent article", async () => {
             const response = await request(app)
                 .delete("/api/articles/nonexistent")
@@ -310,8 +317,9 @@ describe("Articles Routes Integration Tests", () => {
         it("requires auth", async () => {
             const article = await seedArticle(testUser.id);
 
-            const response = await request(app)
-                .delete(`/api/articles/${article.slug}`);
+            const response = await request(app).delete(
+                `/api/articles/${article.slug}`,
+            );
 
             expect(response.status).toBe(401);
         });

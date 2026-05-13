@@ -3,7 +3,11 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import ArticleAuthorButtons from "../../src/components/ArticleAuthorButtons";
 
 jest.mock("react-router-dom", () => ({
-    Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>,
+    Link: ({ to, children, ...props }) => (
+        <a href={to} {...props}>
+            {children}
+        </a>
+    ),
     useNavigate: jest.fn(),
 }));
 
@@ -89,7 +93,9 @@ describe("ArticleAuthorButtons Component", () => {
         const deleteBtn = screen.getByText(/Delete Article/);
         fireEvent.click(deleteBtn);
 
-        expect(window.confirm).toHaveBeenCalledWith("Want to delete the article?");
+        expect(window.confirm).toHaveBeenCalledWith(
+            "Want to delete the article?",
+        );
     });
 
     it("should not delete if user cancels confirm", async () => {
@@ -111,25 +117,34 @@ describe("ArticleAuthorButtons Component", () => {
         render(<ArticleAuthorButtons {...mockArticleData} />);
 
         const editLink = screen.getByText(/Edit Article/).closest("a");
-        expect(editLink).toHaveAttribute("href", "/editor/how-to-train-your-dragon");
+        expect(editLink).toHaveAttribute(
+            "href",
+            "/editor/how-to-train-your-dragon",
+        );
     });
 
     it("should pass article data to edit link", () => {
-        const { container } = render(<ArticleAuthorButtons {...mockArticleData} />);
+        const { container } = render(
+            <ArticleAuthorButtons {...mockArticleData} />,
+        );
 
         const editButton = container.querySelector("button:nth-child(2)");
         expect(editButton).toBeInTheDocument();
     });
 
     it("should have delete button with red color", () => {
-        const { container } = render(<ArticleAuthorButtons {...mockArticleData} />);
+        const { container } = render(
+            <ArticleAuthorButtons {...mockArticleData} />,
+        );
 
         const deleteBtn = container.querySelector("button:first-child");
         expect(deleteBtn).toHaveStyle({ color: "#d00" });
     });
 
     it("should have edit button with gray color", () => {
-        const { container } = render(<ArticleAuthorButtons {...mockArticleData} />);
+        const { container } = render(
+            <ArticleAuthorButtons {...mockArticleData} />,
+        );
 
         const editBtn = container.querySelector("button:nth-child(2)");
         expect(editBtn).toHaveStyle({ color: "#777" });

@@ -19,9 +19,7 @@ describe("NotFound Route", () => {
         it("should render not-found wrapper", () => {
             const { container } = renderNotFound();
 
-            expect(
-                container.querySelector(".not-found"),
-            ).toBeInTheDocument();
+            expect(container.querySelector(".not-found")).toBeInTheDocument();
         });
 
         it("should render 404 heading", () => {
@@ -59,9 +57,7 @@ describe("NotFound Route", () => {
         it("should render home link with correct text", () => {
             renderNotFound();
 
-            expect(
-                screen.getByText("Go to home page"),
-            ).toBeInTheDocument();
+            expect(screen.getByText("Go to home page")).toBeInTheDocument();
         });
 
         it("should be a valid link element", () => {
@@ -89,9 +85,7 @@ describe("NotFound Route", () => {
         it("should display navigation link", () => {
             renderNotFound();
 
-            expect(
-                screen.getByText("Go to home page"),
-            ).toBeInTheDocument();
+            expect(screen.getByText("Go to home page")).toBeInTheDocument();
         });
 
         it("should only have one link", () => {

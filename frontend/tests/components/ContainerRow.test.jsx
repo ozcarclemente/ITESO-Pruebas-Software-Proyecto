@@ -85,7 +85,9 @@ describe("ContainerRow Component", () => {
             </ContainerRow>,
         );
 
-        expect(container.querySelector(".container.test-type")).toBeInTheDocument();
+        expect(
+            container.querySelector(".container.test-type"),
+        ).toBeInTheDocument();
         expect(
             container.querySelector(".container.test-type > .row > p"),
         ).toBeInTheDocument();

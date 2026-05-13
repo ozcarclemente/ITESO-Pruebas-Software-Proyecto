@@ -20,11 +20,7 @@ jest.mock("../../src/components/SignUpForm", () => ({
     __esModule: true,
     default: ({ onError }) => (
         <form data-testid="signup-form">
-            <input
-                type="text"
-                placeholder="Username"
-                data-testid="username"
-            />
+            <input type="text" placeholder="Username" data-testid="username" />
             <input type="email" placeholder="Email" data-testid="email" />
             <input
                 type="password"
@@ -65,7 +61,9 @@ describe("SignUp Route", () => {
         it("should render with title 'Sign up'", () => {
             renderSignUp();
 
-            expect(screen.getByRole("heading", { name: /Sign up/i })).toBeInTheDocument();
+            expect(
+                screen.getByRole("heading", { name: /Sign up/i }),
+            ).toBeInTheDocument();
         });
 
         it("should render login link text", () => {
@@ -193,7 +191,9 @@ describe("SignUp Route", () => {
         it("should pass correct props to AuthPageContainer", () => {
             renderSignUp();
 
-            expect(screen.getByRole("heading", { name: /Sign up/i })).toBeInTheDocument();
+            expect(
+                screen.getByRole("heading", { name: /Sign up/i }),
+            ).toBeInTheDocument();
             expect(
                 screen.getAllByText("Sign in to your account")[0],
             ).toBeInTheDocument();

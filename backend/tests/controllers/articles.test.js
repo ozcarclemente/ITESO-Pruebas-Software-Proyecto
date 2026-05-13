@@ -515,7 +515,9 @@ describe("GET /api/articles (Filters)", () => {
                     dataValues: { Favorites: [] },
                     author: { id: 1, username: "user1", dataValues: {} },
                     tagList: [{ name: "javascript" }],
-                    getTagList: jest.fn().mockResolvedValue([{ name: "javascript" }]),
+                    getTagList: jest
+                        .fn()
+                        .mockResolvedValue([{ name: "javascript" }]),
                 },
             ],
             count: 1,
@@ -560,7 +562,9 @@ describe("GET /api/articles (Filters)", () => {
 
         await allArticles(mockReq, mockRes, mockNext);
 
-        expect(User.findOne).toHaveBeenCalledWith({ where: { username: "user2" } });
+        expect(User.findOne).toHaveBeenCalledWith({
+            where: { username: "user2" },
+        });
         expect(mockUser.getFavorites).toHaveBeenCalled();
     });
 });

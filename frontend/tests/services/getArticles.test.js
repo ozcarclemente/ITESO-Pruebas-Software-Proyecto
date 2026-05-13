@@ -80,7 +80,13 @@ describe("getArticles Service", () => {
 
     it("should fetch articles filtered by author", async () => {
         const mockData = {
-            articles: [{ id: 1, title: "Author Article", author: { username: "jake" } }],
+            articles: [
+                {
+                    id: 1,
+                    title: "Author Article",
+                    author: { username: "jake" },
+                },
+            ],
             articlesCount: 3,
         };
 

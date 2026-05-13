@@ -4,7 +4,10 @@ module.exports = {
             name: "backend:unit",
             displayName: "backend:unit",
             testEnvironment: "node",
-            testMatch: ["<rootDir>/tests/**/*.test.js", "!<rootDir>/tests/integration/**"],
+            testMatch: [
+                "<rootDir>/tests/**/*.test.js",
+                "!<rootDir>/tests/integration/**",
+            ],
             globals: {
                 describe: "readonly",
                 it: "readonly",

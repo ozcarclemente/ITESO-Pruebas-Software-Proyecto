@@ -3,7 +3,11 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import ArticlesPagination from "../../src/components/ArticlesPagination";
 
 jest.mock("react-paginate", () => {
-    return function MockReactPaginate({ pageCount, onPageChange, containerClassName }) {
+    return function MockReactPaginate({
+        pageCount,
+        onPageChange,
+        containerClassName,
+    }) {
         return (
             <div className={containerClassName} data-testid="paginate">
                 {pageCount > 1 && (
@@ -12,7 +16,9 @@ jest.mock("react-paginate", () => {
                             Page 1
                         </button>
                         {pageCount > 1 && (
-                            <button onClick={() => onPageChange({ selected: 1 })}>
+                            <button
+                                onClick={() => onPageChange({ selected: 1 })}
+                            >
                                 Page 2
                             </button>
                         )}
@@ -46,7 +52,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const paginate = container.querySelector('[data-testid="paginate"]');
@@ -60,7 +66,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         // 9 articles / 3 per page = 3 pages
@@ -75,7 +81,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const paginate = container.querySelector('[data-testid="paginate"]');
@@ -89,7 +95,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const buttons = container.querySelectorAll("button");
@@ -104,7 +110,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const paginate = container.querySelector(".pagination-sm");
@@ -118,7 +124,7 @@ describe("ArticlesPagination Component", () => {
                 location="global"
                 tagName=""
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         // 15 articles / 3 per page = 5 pages

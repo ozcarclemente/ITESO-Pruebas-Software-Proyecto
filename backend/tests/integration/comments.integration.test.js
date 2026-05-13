@@ -53,8 +53,9 @@ describe("Comments Routes Integration Tests", () => {
         it("works without auth", async () => {
             await seedComment(testUser.id, testArticle.id);
 
-            const response = await request(app)
-                .get(`/api/articles/${testArticle.slug}/comments`);
+            const response = await request(app).get(
+                `/api/articles/${testArticle.slug}/comments`,
+            );
 
             expect(response.status).toBe(200);
         });
@@ -73,7 +74,9 @@ describe("Comments Routes Integration Tests", () => {
 
             expect(response.status).toBe(201);
             expect(response.body.comment.body).toBe("Great article!");
-            expect(response.body.comment.author.username).toBe(testUser.username);
+            expect(response.body.comment.author.username).toBe(
+                testUser.username,
+            );
         });
 
         it("rejects missing body", async () => {
@@ -141,7 +144,9 @@ describe("Comments Routes Integration Tests", () => {
             const comment = await seedComment(testUser.id, testArticle.id);
 
             const response = await request(app)
-                .delete(`/api/articles/${testArticle.slug}/comments/${comment.id}`)
+                .delete(
+                    `/api/articles/${testArticle.slug}/comments/${comment.id}`,
+                )
                 .set("Authorization", `Bearer ${authToken}`);
 
             expect(response.status).toBe(200);
@@ -158,8 +163,9 @@ describe("Comments Routes Integration Tests", () => {
         it("requires auth", async () => {
             const comment = await seedComment(testUser.id, testArticle.id);
 
-            const response = await request(app)
-                .delete(`/api/articles/${testArticle.slug}/comments/${comment.id}`);
+            const response = await request(app).delete(
+                `/api/articles/${testArticle.slug}/comments/${comment.id}`,
+            );
 
             expect(response.status).toBe(401);
         });

@@ -57,10 +57,7 @@ describe("Bcrypt Helper", () => {
         it("should return false for non-matching password", async () => {
             bcrypt.compare.mockResolvedValue(false);
 
-            const result = await bcryptCompare(
-                "wrongpassword",
-                hashedPassword,
-            );
+            const result = await bcryptCompare("wrongpassword", hashedPassword);
 
             expect(bcrypt.compare).toHaveBeenCalledWith(
                 "wrongpassword",

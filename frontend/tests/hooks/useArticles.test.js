@@ -96,7 +96,9 @@ describe("useArticles Hook", () => {
         });
 
         it("should not call getArticles for feed without headers", () => {
-            renderHook(() => useArticles({ location: "feed", tabName: "feed" }));
+            renderHook(() =>
+                useArticles({ location: "feed", tabName: "feed" }),
+            );
 
             expect(mockGetArticles).not.toHaveBeenCalled();
         });
@@ -108,7 +110,9 @@ describe("useArticles Hook", () => {
                 articlesCount: 0,
             });
 
-            renderHook(() => useArticles({ location: "feed", tabName: "feed" }));
+            renderHook(() =>
+                useArticles({ location: "feed", tabName: "feed" }),
+            );
 
             await waitFor(() => {
                 expect(mockGetArticles).toHaveBeenCalled();

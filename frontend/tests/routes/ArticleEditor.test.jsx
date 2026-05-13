@@ -60,13 +60,17 @@ describe("ArticleEditor Route", () => {
         const editorPage = container.querySelector(".editor-page");
         expect(editorPage).toBeInTheDocument();
 
-        const containerRow = editorPage.querySelector('[data-testid="container-page"]');
+        const containerRow = editorPage.querySelector(
+            '[data-testid="container-page"]',
+        );
         expect(containerRow).toBeInTheDocument();
 
         const colDiv = containerRow.querySelector(".col-md-10");
         expect(colDiv).toBeInTheDocument();
 
-        const form = colDiv.querySelector('[data-testid="article-editor-form"]');
+        const form = colDiv.querySelector(
+            '[data-testid="article-editor-form"]',
+        );
         expect(form).toBeInTheDocument();
     });
 });

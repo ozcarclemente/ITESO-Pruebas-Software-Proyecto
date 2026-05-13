@@ -59,10 +59,7 @@ describe("Helpers", () => {
 
             appendTagList(articleTags, article);
 
-            expect(article.dataValues.tagList).toEqual([
-                "javascript",
-                "react",
-            ]);
+            expect(article.dataValues.tagList).toEqual(["javascript", "react"]);
         });
 
         it("should handle empty tagList", () => {

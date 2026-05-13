@@ -60,7 +60,10 @@ describe("JWT Helper", () => {
 
             const result = await jwtVerify(mockToken);
 
-            expect(jwt.verify).toHaveBeenCalledWith(mockToken, "test-secret-key");
+            expect(jwt.verify).toHaveBeenCalledWith(
+                mockToken,
+                "test-secret-key",
+            );
             expect(result).toEqual(decodedPayload);
         });
 

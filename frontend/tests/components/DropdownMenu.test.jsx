@@ -62,9 +62,9 @@ describe("DropdownMenu Component", () => {
 
     it("should initially hide dropdown menu", () => {
         renderDropdownMenu();
-        const menu = screen.getByRole("img").parentElement.parentElement.querySelector(
-            ".dropdown-menu",
-        );
+        const menu = screen
+            .getByRole("img")
+            .parentElement.parentElement.querySelector(".dropdown-menu");
         expect(menu).toHaveStyle({ display: "none" });
     });
 
@@ -106,7 +106,9 @@ describe("DropdownMenu Component", () => {
 
     it("should render Settings dropdown item", () => {
         renderDropdownMenu();
-        expect(screen.getByTestId("dropdown-item-Settings")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("dropdown-item-Settings"),
+        ).toBeInTheDocument();
     });
 
     it("should render Logout dropdown item with handler", () => {
@@ -120,14 +122,18 @@ describe("DropdownMenu Component", () => {
 
     it("should render dropdown divider", () => {
         renderDropdownMenu();
-        const divider = screen.getByText("testuser").parentElement.querySelector(
-            ".dropdown-divider",
-        );
+        const divider = screen
+            .getByText("testuser")
+            .parentElement.querySelector(".dropdown-divider");
         expect(divider).toBeInTheDocument();
     });
 
     it("should pass correct state to Profile item", () => {
-        const loggedUser = { username: "testuser", image: "test.jpg", bio: "test bio" };
+        const loggedUser = {
+            username: "testuser",
+            image: "test.jpg",
+            bio: "test bio",
+        };
         useAuth.mockReturnValue({
             loggedUser,
             setAuthState: mockSetAuthState,

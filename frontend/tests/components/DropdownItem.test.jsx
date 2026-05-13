@@ -29,7 +29,10 @@ describe("DropdownItem Component", () => {
 
     it("should have correct href when url is provided", () => {
         renderDropdownItem({ url: "/profile/testuser" });
-        expect(screen.getByRole("link")).toHaveAttribute("href", "/profile/testuser");
+        expect(screen.getByRole("link")).toHaveAttribute(
+            "href",
+            "/profile/testuser",
+        );
     });
 
     it("should default to hash when no url provided", () => {
@@ -40,12 +43,16 @@ describe("DropdownItem Component", () => {
 
     it("should render icon when provided", () => {
         renderDropdownItem({ icon: "ion-person" });
-        expect(screen.getByRole("link").querySelector(".ion-person")).toBeInTheDocument();
+        expect(
+            screen.getByRole("link").querySelector(".ion-person"),
+        ).toBeInTheDocument();
     });
 
     it("should not render icon when not provided", () => {
         renderDropdownItem({ icon: null });
-        expect(screen.getByRole("link").querySelector("i")).not.toBeInTheDocument();
+        expect(
+            screen.getByRole("link").querySelector("i"),
+        ).not.toBeInTheDocument();
     });
 
     it("should render icon and text together", () => {

@@ -165,7 +165,9 @@ describe("FeedContext", () => {
         });
 
         it("should throw error when useFeedContext is called outside of FeedProvider", () => {
-            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            const consoleSpy = jest
+                .spyOn(console, "error")
+                .mockImplementation();
 
             expect(() => {
                 render(<TestComponent />);

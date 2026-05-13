@@ -44,9 +44,7 @@ describe("Settings Route", () => {
         it("should render page title", () => {
             renderSettings();
 
-            expect(
-                screen.getByText("Your Settings"),
-            ).toBeInTheDocument();
+            expect(screen.getByText("Your Settings")).toBeInTheDocument();
         });
 
         it("should render SettingsForm component", () => {
@@ -98,9 +96,7 @@ describe("Settings Route", () => {
         it("should have 'Your Settings' text in heading", () => {
             renderSettings();
 
-            expect(
-                screen.getByText("Your Settings"),
-            ).toBeInTheDocument();
+            expect(screen.getByText("Your Settings")).toBeInTheDocument();
         });
 
         it("should have correct styling on heading", () => {
@@ -183,9 +179,7 @@ describe("Settings Route", () => {
         it("should display settings page content", () => {
             renderSettings();
 
-            expect(
-                screen.getByText("Your Settings"),
-            ).toBeInTheDocument();
+            expect(screen.getByText("Your Settings")).toBeInTheDocument();
             expect(screen.getByTestId("settings-form")).toBeInTheDocument();
         });
 

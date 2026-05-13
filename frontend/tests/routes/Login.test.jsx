@@ -60,7 +60,9 @@ describe("Login Route", () => {
         it("should render with title 'Sign in'", () => {
             renderLogin();
 
-            expect(screen.getByRole("heading", { name: /Sign in/i })).toBeInTheDocument();
+            expect(
+                screen.getByRole("heading", { name: /Sign in/i }),
+            ).toBeInTheDocument();
         });
 
         it("should render signup link text", () => {
@@ -180,8 +182,12 @@ describe("Login Route", () => {
         it("should pass correct props to AuthPageContainer", () => {
             renderLogin();
 
-            expect(screen.getByRole("heading", { name: /Sign in/i })).toBeInTheDocument();
-            expect(screen.getAllByText("Need an account?")[0]).toBeInTheDocument();
+            expect(
+                screen.getByRole("heading", { name: /Sign in/i }),
+            ).toBeInTheDocument();
+            expect(
+                screen.getAllByText("Need an account?")[0],
+            ).toBeInTheDocument();
 
             const link = screen.getByTestId("link");
             expect(link).toHaveAttribute("href", "/register");

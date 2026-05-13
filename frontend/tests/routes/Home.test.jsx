@@ -22,7 +22,9 @@ jest.mock("../../src/components/PopularTags", () => ({
 }));
 jest.mock("../../src/context/FeedContext", () => ({
     __esModule: true,
-    default: ({ children }) => <div data-testid="feed-provider">{children}</div>,
+    default: ({ children }) => (
+        <div data-testid="feed-provider">{children}</div>
+    ),
 }));
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -69,7 +71,9 @@ describe("Home Route", () => {
             const { container } = renderHome();
 
             const banner = container.querySelector(".home-page");
-            const bannerChildren = banner.querySelectorAll("[data-testid='banner']");
+            const bannerChildren = banner.querySelectorAll(
+                "[data-testid='banner']",
+            );
             expect(bannerChildren.length).toBe(0);
         });
 

@@ -32,7 +32,9 @@ describe("Favorites Routes", () => {
 
     describe("POST /articles/:slug/favorite", () => {
         it("should favorite article", async () => {
-            const res = await request(app).post("/articles/test-article/favorite");
+            const res = await request(app).post(
+                "/articles/test-article/favorite",
+            );
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("article");
@@ -43,7 +45,9 @@ describe("Favorites Routes", () => {
 
     describe("DELETE /articles/:slug/favorite", () => {
         it("should unfavorite article", async () => {
-            const res = await request(app).delete("/articles/test-article/favorite");
+            const res = await request(app).delete(
+                "/articles/test-article/favorite",
+            );
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty("article");

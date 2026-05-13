@@ -33,7 +33,12 @@ describe("Auth Services", () => {
             });
 
             expect(axios).toHaveBeenCalledWith({
-                data: { user: { email: "john@example.com", password: "password123" } },
+                data: {
+                    user: {
+                        email: "john@example.com",
+                        password: "password123",
+                    },
+                },
                 method: "POST",
                 url: "api/users/login",
             });
@@ -136,7 +141,13 @@ describe("Auth Services", () => {
             });
 
             expect(axios).toHaveBeenCalledWith({
-                data: { user: { username: "newuser", email: "new@example.com", password: "newpass123" } },
+                data: {
+                    user: {
+                        username: "newuser",
+                        email: "new@example.com",
+                        password: "newpass123",
+                    },
+                },
                 method: "POST",
                 url: "api/users",
             });

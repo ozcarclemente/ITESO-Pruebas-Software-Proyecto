@@ -142,7 +142,10 @@ describe("Users Controller", () => {
 
         it("should throw AlreadyTakenError when email exists", async () => {
             const { User: MockUser } = require("../../models");
-            MockUser.findOne.mockResolvedValue({ id: 2, email: "existing@test.com" });
+            MockUser.findOne.mockResolvedValue({
+                id: 2,
+                email: "existing@test.com",
+            });
 
             req.body.user = {
                 username: "newuser",

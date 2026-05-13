@@ -106,14 +106,12 @@ describe("Users Routes Integration Tests", () => {
                 password: await bcrypt.hash(password, 10),
             });
 
-            const response = await request(app)
-                .post("/api/users/login")
-                .send({
-                    user: {
-                        email,
-                        password,
-                    },
-                });
+            const response = await request(app).post("/api/users/login").send({
+                user: {
+                    email,
+                    password,
+                },
+            });
 
             expect(response.status).toBe(200);
             expect(response.body.user.email).toBe(email);
@@ -162,14 +160,12 @@ describe("Users Routes Integration Tests", () => {
                 password: await bcrypt.hash(password, 10),
             });
 
-            const response = await request(app)
-                .post("/api/users/login")
-                .send({
-                    user: {
-                        email,
-                        password,
-                    },
-                });
+            const response = await request(app).post("/api/users/login").send({
+                user: {
+                    email,
+                    password,
+                },
+            });
 
             expect(response.status).toBe(200);
             expect(response.body.user.password).toBeUndefined();
