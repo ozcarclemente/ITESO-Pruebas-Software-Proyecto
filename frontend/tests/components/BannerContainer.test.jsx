@@ -93,11 +93,7 @@ describe("BannerContainer Component", () => {
     });
 
     it("should work with text content", () => {
-        render(
-            <BannerContainer>
-                Simple text content
-            </BannerContainer>,
-        );
+        render(<BannerContainer>Simple text content</BannerContainer>);
 
         expect(screen.getByText("Simple text content")).toBeInTheDocument();
     });

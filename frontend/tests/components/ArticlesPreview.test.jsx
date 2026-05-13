@@ -3,7 +3,11 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import ArticlesPreview from "../../src/components/ArticlesPreview";
 
 jest.mock("react-router-dom", () => ({
-    Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>,
+    Link: ({ to, children, ...props }) => (
+        <a href={to} {...props}>
+            {children}
+        </a>
+    ),
 }));
 
 jest.mock("../../src/components/ArticleMeta", () => {
@@ -14,13 +18,23 @@ jest.mock("../../src/components/ArticleMeta", () => {
 
 jest.mock("../../src/components/ArticleTags", () => {
     return function MockArticleTags({ tagList }) {
-        return <ul data-testid="article-tags">{tagList?.map(tag => <li key={tag}>{tag}</li>)}</ul>;
+        return (
+            <ul data-testid="article-tags">
+                {tagList?.map((tag) => (
+                    <li key={tag}>{tag}</li>
+                ))}
+            </ul>
+        );
     };
 });
 
 jest.mock("../../src/components/FavButton", () => {
     return function MockFavButton({ handler, slug }) {
-        return <button data-testid="fav-button" onClick={() => handler({ slug })}>Fav</button>;
+        return (
+            <button data-testid="fav-button" onClick={() => handler({ slug })}>
+                Fav
+            </button>
+        );
     };
 });
 
@@ -60,7 +74,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText("Article 1")).toBeInTheDocument();
@@ -73,7 +87,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText("Desc 1")).toBeInTheDocument();
@@ -86,7 +100,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const previews = container.querySelectorAll(".article-preview");
@@ -99,7 +113,7 @@ describe("ArticlesPreview Component", () => {
                 articles={[]}
                 loading={true}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText(/Loading article/)).toBeInTheDocument();
@@ -111,7 +125,7 @@ describe("ArticlesPreview Component", () => {
                 articles={[]}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText(/No articles available/)).toBeInTheDocument();
@@ -123,7 +137,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const links = screen.getAllByRole("link");
@@ -136,7 +150,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const link = screen.getAllByRole("link")[0];
@@ -149,7 +163,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const tagElements = screen.getAllByTestId("article-tags");
@@ -162,7 +176,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const favButtons = screen.getAllByTestId("fav-button");
@@ -175,7 +189,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const readMoreElements = screen.getAllByText("Read more...");
@@ -188,7 +202,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const favButtons = screen.getAllByTestId("fav-button");
@@ -206,7 +220,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const links = container.querySelectorAll("a.preview-link");
@@ -220,7 +234,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const metaElements = screen.getAllByTestId("article-meta");
@@ -246,7 +260,7 @@ describe("ArticlesPreview Component", () => {
                 articles={articlesWithoutTags}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText("No Tags Article")).toBeInTheDocument();
@@ -260,7 +274,7 @@ describe("ArticlesPreview Component", () => {
                 articles={undefined}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         expect(screen.getByText(/No articles available/)).toBeInTheDocument();
@@ -272,7 +286,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const links = screen.getAllByRole("link");
@@ -286,7 +300,7 @@ describe("ArticlesPreview Component", () => {
                 articles={mockArticles}
                 loading={false}
                 updateArticles={mockUpdateArticles}
-            />
+            />,
         );
 
         const favButtons = screen.getAllByTestId("fav-button");

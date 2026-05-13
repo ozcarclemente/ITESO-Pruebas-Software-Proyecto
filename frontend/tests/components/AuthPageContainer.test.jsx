@@ -51,7 +51,10 @@ describe("AuthPageContainer Component", () => {
     });
 
     it("should render link with custom path", () => {
-        renderAuthPageContainer({ path: "/register", text: "Need an account?" });
+        renderAuthPageContainer({
+            path: "/register",
+            text: "Need an account?",
+        });
         const link = screen.getByRole("link");
         expect(link).toHaveAttribute("href", "/register");
         expect(link).toHaveTextContent("Need an account?");
@@ -121,7 +124,9 @@ describe("AuthPageContainer Component", () => {
         const { container } = renderAuthPageContainer();
 
         const authPage = container.querySelector(".auth-page");
-        const containerRow = authPage.querySelector('[data-testid="container-row"]');
+        const containerRow = authPage.querySelector(
+            '[data-testid="container-row"]',
+        );
         const colDiv = containerRow.querySelector(".col-md-6");
         const title = colDiv.querySelector("h1");
 

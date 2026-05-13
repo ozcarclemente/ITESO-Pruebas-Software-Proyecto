@@ -38,8 +38,9 @@ describe("Favorites Routes Integration Tests", () => {
         });
 
         it("requires auth", async () => {
-            const response = await request(app)
-                .post(`/api/articles/${testArticle.slug}/favorite`);
+            const response = await request(app).post(
+                `/api/articles/${testArticle.slug}/favorite`,
+            );
 
             expect(response.status).toBe(401);
         });
@@ -82,8 +83,9 @@ describe("Favorites Routes Integration Tests", () => {
         });
 
         it("requires auth", async () => {
-            const response = await request(app)
-                .delete(`/api/articles/${testArticle.slug}/favorite`);
+            const response = await request(app).delete(
+                `/api/articles/${testArticle.slug}/favorite`,
+            );
 
             expect(response.status).toBe(401);
         });

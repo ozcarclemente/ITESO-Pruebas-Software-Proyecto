@@ -24,7 +24,9 @@ describe("NavItem Component", () => {
 
     it("should render icon when provided", () => {
         renderNavItem({ icon: "ion-compose" });
-        expect(screen.getByRole("link").querySelector(".ion-compose")).toBeInTheDocument();
+        expect(
+            screen.getByRole("link").querySelector(".ion-compose"),
+        ).toBeInTheDocument();
     });
 
     it("should not render icon when not provided", () => {
@@ -60,6 +62,8 @@ describe("NavItem Component", () => {
     it("should render multiple icons and text together", () => {
         renderNavItem({ text: "New Article", icon: "ion-compose" });
         expect(screen.getByText("New Article")).toBeInTheDocument();
-        expect(screen.getByRole("link").querySelector(".ion-compose")).toBeInTheDocument();
+        expect(
+            screen.getByRole("link").querySelector(".ion-compose"),
+        ).toBeInTheDocument();
     });
 });

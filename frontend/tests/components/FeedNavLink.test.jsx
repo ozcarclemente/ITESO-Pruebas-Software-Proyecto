@@ -28,7 +28,9 @@ describe("FeedNavLink Component", () => {
             changeTab: mockChangeTab,
         });
 
-        const { container } = render(<FeedNavLink name="global" text="Global Feed" />);
+        const { container } = render(
+            <FeedNavLink name="global" text="Global Feed" />,
+        );
         expect(container.querySelector(".nav-item")).toBeInTheDocument();
         expect(screen.getByRole("button")).toHaveClass("nav-link");
     });
@@ -100,10 +102,7 @@ describe("FeedNavLink Component", () => {
         render(<FeedNavLink name="feed" text="Your Feed" />);
         fireEvent.click(screen.getByText("Your Feed"));
 
-        expect(mockChangeTab).toHaveBeenCalledWith(
-            expect.any(Object),
-            "feed",
-        );
+        expect(mockChangeTab).toHaveBeenCalledWith(expect.any(Object), "feed");
     });
 
     it("should render with multiple different names", () => {
@@ -134,9 +133,7 @@ describe("FeedNavLink Component", () => {
             changeTab: mockChangeTab,
         });
 
-        render(
-            <FeedNavLink icon name="tag" text="python" />,
-        );
+        render(<FeedNavLink icon name="tag" text="python" />);
 
         const button = screen.getByText("python");
         const icon = button.querySelector(".ion-pound");

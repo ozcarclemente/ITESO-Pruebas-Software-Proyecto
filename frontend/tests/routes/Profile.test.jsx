@@ -45,7 +45,9 @@ describe("Profile Route", () => {
     describe("page structure", () => {
         it("should render profile-page wrapper", () => {
             const { container } = renderProfile();
-            expect(container.querySelector(".profile-page")).toBeInTheDocument();
+            expect(
+                container.querySelector(".profile-page"),
+            ).toBeInTheDocument();
         });
 
         it("should render user-info section", () => {
@@ -91,7 +93,9 @@ describe("Profile Route", () => {
 
         it("should have outline-active class on nav", () => {
             const { container } = renderProfile();
-            expect(container.querySelector(".outline-active")).toBeInTheDocument();
+            expect(
+                container.querySelector(".outline-active"),
+            ).toBeInTheDocument();
         });
     });
 
@@ -134,7 +138,9 @@ describe("Profile Route", () => {
         it("should render NavItem components with correct props", () => {
             renderProfile();
             const myArticlesItem = screen.getByTestId("nav-item-my-articles");
-            const favoritedItem = screen.getByTestId("nav-item-favorited-articles");
+            const favoritedItem = screen.getByTestId(
+                "nav-item-favorited-articles",
+            );
 
             expect(myArticlesItem).toBeInTheDocument();
             expect(favoritedItem).toBeInTheDocument();

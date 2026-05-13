@@ -96,7 +96,9 @@ describe("Profiles Controller", () => {
 
             await followToggler(req, res, next);
 
-            expect(mockProfile.addFollower).toHaveBeenCalledWith(req.loggedUser);
+            expect(mockProfile.addFollower).toHaveBeenCalledWith(
+                req.loggedUser,
+            );
             expect(res.json).toHaveBeenCalledWith({ profile: mockProfile });
         });
 

@@ -58,7 +58,9 @@ describe("Navbar Component", () => {
 
         it("should render New Article NavItem", () => {
             renderNavbar();
-            expect(screen.getByTestId("nav-item-New Article")).toBeInTheDocument();
+            expect(
+                screen.getByTestId("nav-item-New Article"),
+            ).toBeInTheDocument();
         });
 
         it("should render DropdownMenu", () => {
@@ -68,8 +70,12 @@ describe("Navbar Component", () => {
 
         it("should not render Login and Sign up items", () => {
             renderNavbar();
-            expect(screen.queryByTestId("nav-item-Login")).not.toBeInTheDocument();
-            expect(screen.queryByTestId("nav-item-Sign up")).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId("nav-item-Login"),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId("nav-item-Sign up"),
+            ).not.toBeInTheDocument();
         });
     });
 
@@ -90,12 +96,16 @@ describe("Navbar Component", () => {
 
         it("should not render New Article NavItem", () => {
             renderNavbar();
-            expect(screen.queryByTestId("nav-item-New Article")).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId("nav-item-New Article"),
+            ).not.toBeInTheDocument();
         });
 
         it("should not render DropdownMenu", () => {
             renderNavbar();
-            expect(screen.queryByTestId("dropdown-menu")).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId("dropdown-menu"),
+            ).not.toBeInTheDocument();
         });
     });
 
@@ -110,7 +120,9 @@ describe("Navbar Component", () => {
     it("should have container and pull-xs-right classes", () => {
         useAuth.mockReturnValue({ isAuth: false });
         renderNavbar();
-        const container = screen.getByRole("navigation").querySelector(".container");
+        const container = screen
+            .getByRole("navigation")
+            .querySelector(".container");
         expect(container).toBeInTheDocument();
         const navList = container.querySelector(".pull-xs-right");
         expect(navList).toBeInTheDocument();

@@ -17,8 +17,16 @@ describe("Articles Services", () => {
     describe("getArticles", () => {
         it("should fetch articles from global feed", async () => {
             const mockArticles = [
-                { slug: "article-1", title: "First Article", body: "Content 1" },
-                { slug: "article-2", title: "Second Article", body: "Content 2" },
+                {
+                    slug: "article-1",
+                    title: "First Article",
+                    body: "Content 1",
+                },
+                {
+                    slug: "article-2",
+                    title: "Second Article",
+                    body: "Content 2",
+                },
             ];
 
             axios.mockResolvedValueOnce({

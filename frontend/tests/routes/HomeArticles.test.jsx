@@ -137,7 +137,10 @@ describe("HomeArticles Route", () => {
         const { useFeedContext } = require("../../src/context/FeedContext");
         const useArticles = require("../../src/hooks/useArticles");
 
-        useFeedContext.mockReturnValue({ tabName: "tag", tagName: "javascript" });
+        useFeedContext.mockReturnValue({
+            tabName: "tag",
+            tagName: "javascript",
+        });
         useArticles.mockReturnValue({
             articles: [{ slug: "article-1" }],
             articlesCount: 3,

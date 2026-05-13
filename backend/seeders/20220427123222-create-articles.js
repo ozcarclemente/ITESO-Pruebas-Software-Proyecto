@@ -21,19 +21,27 @@ module.exports = {
                 updatedAt: new Date(),
             }));
 
-        const insertedArticles = await queryInterface.bulkInsert("Articles", articles, {
-            returning: true,
-        });
+        const insertedArticles = await queryInterface.bulkInsert(
+            "Articles",
+            articles,
+            {
+                returning: true,
+            },
+        );
 
         // Assign random tags to each article
-        const tagList = insertedArticles.map((article) => {
-            const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 tags per article
-            const shuffledTags = tags.sort(() => 0.5 - Math.random()).slice(0, numTags);
-            return shuffledTags.map((tag) => ({
-                articleId: article.id,
-                tagName: tag.name,
-            }));
-        }).flat();
+        const tagList = insertedArticles
+            .map((article) => {
+                const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 tags per article
+                const shuffledTags = tags
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, numTags);
+                return shuffledTags.map((tag) => ({
+                    articleId: article.id,
+                    tagName: tag.name,
+                }));
+            })
+            .flat();
 
         await queryInterface.bulkInsert("TagList", tagList, {});
     },

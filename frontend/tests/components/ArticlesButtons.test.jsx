@@ -24,7 +24,11 @@ jest.mock("../../src/components/FollowButton", () => {
 
 jest.mock("../../src/components/FavButton", () => {
     return function MockFavButton({ text }) {
-        return <button data-testid="fav-button">{text ? "Favorite" : "Fav"}</button>;
+        return (
+            <button data-testid="fav-button">
+                {text ? "Favorite" : "Fav"}
+            </button>
+        );
     };
 });
 
@@ -65,7 +69,10 @@ describe("ArticlesButtons Component", () => {
         });
 
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(screen.getByTestId("author-buttons")).toBeInTheDocument();
@@ -73,7 +80,10 @@ describe("ArticlesButtons Component", () => {
 
     it("should render follow button when not author", () => {
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(screen.getByTestId("follow-button")).toBeInTheDocument();
@@ -81,7 +91,10 @@ describe("ArticlesButtons Component", () => {
 
     it("should render favorite button when not author", () => {
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(screen.getByTestId("fav-button")).toBeInTheDocument();
@@ -94,7 +107,10 @@ describe("ArticlesButtons Component", () => {
         });
 
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(screen.queryByTestId("follow-button")).not.toBeInTheDocument();
@@ -102,7 +118,10 @@ describe("ArticlesButtons Component", () => {
 
     it("should extract author from article", () => {
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(screen.getByText("Follow author1")).toBeInTheDocument();
@@ -115,7 +134,7 @@ describe("ArticlesButtons Component", () => {
             <ArticlesButtons
                 article={articleNoAuthor}
                 setArticle={mockSetArticle}
-            />
+            />,
         );
 
         // Should not crash
@@ -124,7 +143,10 @@ describe("ArticlesButtons Component", () => {
 
     it("should pass setArticle to handlers", () => {
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         // Component renders correctly
@@ -135,7 +157,10 @@ describe("ArticlesButtons Component", () => {
         const { useParams } = require("react-router-dom");
 
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(useParams).toHaveBeenCalled();
@@ -145,7 +170,10 @@ describe("ArticlesButtons Component", () => {
         const { useAuth } = require("../../src/context/AuthContext");
 
         render(
-            <ArticlesButtons article={mockArticle} setArticle={mockSetArticle} />
+            <ArticlesButtons
+                article={mockArticle}
+                setArticle={mockSetArticle}
+            />,
         );
 
         expect(useAuth).toHaveBeenCalled();

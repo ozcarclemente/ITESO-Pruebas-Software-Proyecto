@@ -29,8 +29,7 @@ describe("User Routes Integration Tests", () => {
         });
 
         it("requires auth", async () => {
-            const response = await request(app)
-                .get("/api/user");
+            const response = await request(app).get("/api/user");
 
             expect(response.status).toBe(401);
         });
@@ -79,7 +78,9 @@ describe("User Routes Integration Tests", () => {
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body.user.image).toBe("https://example.com/newimage.jpg");
+            expect(response.body.user.image).toBe(
+                "https://example.com/newimage.jpg",
+            );
         });
 
         it("updates user password", async () => {
@@ -120,7 +121,9 @@ describe("User Routes Integration Tests", () => {
 
             expect(response.status).toBe(200);
             expect(response.body.user.bio).toBe("New bio");
-            expect(response.body.user.image).toBe("https://example.com/image.jpg");
+            expect(response.body.user.image).toBe(
+                "https://example.com/image.jpg",
+            );
         });
 
         it("allows updating username and email", async () => {

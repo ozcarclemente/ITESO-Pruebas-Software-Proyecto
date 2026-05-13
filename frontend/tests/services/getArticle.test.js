@@ -82,7 +82,7 @@ describe("getArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 url: "api/articles/custom-slug",
-            })
+            }),
         );
     });
 
@@ -101,7 +101,7 @@ describe("getArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 headers: customHeaders,
-            })
+            }),
         );
     });
 

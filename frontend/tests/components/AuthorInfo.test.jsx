@@ -26,7 +26,9 @@ jest.mock("../../src/components/Avatar", () => ({
 }));
 jest.mock("../../src/components/FollowButton", () => ({
     __esModule: true,
-    default: ({ username }) => <button data-testid="follow-button">{username}</button>,
+    default: ({ username }) => (
+        <button data-testid="follow-button">{username}</button>
+    ),
 }));
 jest.mock("markdown-to-jsx", () => ({
     __esModule: true,
@@ -65,7 +67,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent("testuser");
+                expect(
+                    screen.getByRole("heading", { level: 4 }),
+                ).toHaveTextContent("testuser");
             });
         });
 
@@ -120,7 +124,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent("testuser");
+                expect(
+                    screen.getByRole("heading", { level: 4 }),
+                ).toHaveTextContent("testuser");
             });
         });
     });
@@ -155,11 +161,15 @@ describe("AuthorInfo Component", () => {
 
             renderAuthorInfo("testuser", stateData);
 
-            expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent("testuser");
+            expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent(
+                "testuser",
+            );
         });
 
         it("should handle profile fetch error", async () => {
-            const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+            const consoleErrorSpy = jest
+                .spyOn(console, "error")
+                .mockImplementation();
             getProfile.mockRejectedValueOnce(new Error("Failed to fetch"));
 
             renderAuthorInfo("testuser", null);
@@ -192,7 +202,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                const editButton = screen.queryByRole("link", { name: /Edit Profile/ });
+                const editButton = screen.queryByRole("link", {
+                    name: /Edit Profile/,
+                });
                 expect(editButton).toBeInTheDocument();
             });
         });
@@ -235,7 +247,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                expect(screen.queryByTestId("follow-button")).not.toBeInTheDocument();
+                expect(
+                    screen.queryByTestId("follow-button"),
+                ).not.toBeInTheDocument();
             });
         });
 
@@ -256,7 +270,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                const editButton = screen.getByRole("link", { name: /Edit Profile/ });
+                const editButton = screen.getByRole("link", {
+                    name: /Edit Profile/,
+                });
                 expect(editButton).toHaveAttribute("href", "/settings");
             });
         });
@@ -278,7 +294,9 @@ describe("AuthorInfo Component", () => {
             renderAuthorInfo("testuser");
 
             await waitFor(() => {
-                const editButton = screen.getByRole("link", { name: /Edit Profile/ });
+                const editButton = screen.getByRole("link", {
+                    name: /Edit Profile/,
+                });
                 expect(editButton).toHaveClass("action-btn");
             });
         });

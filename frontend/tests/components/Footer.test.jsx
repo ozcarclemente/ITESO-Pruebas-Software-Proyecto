@@ -32,7 +32,9 @@ describe("Footer Component", () => {
 
     it("should render attribution text", () => {
         renderFooter();
-        expect(screen.getByText(/An interactive learning project from/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/An interactive learning project from/),
+        ).toBeInTheDocument();
     });
 
     it("should render Thinkster link", () => {
@@ -64,7 +66,9 @@ describe("Footer Component", () => {
         const children = container.children;
 
         expect(children[0].textContent).toContain("conduit");
-        expect(children[1].textContent).toContain("An interactive learning project");
+        expect(children[1].textContent).toContain(
+            "An interactive learning project",
+        );
     });
 
     it("should have proper HTML structure", () => {

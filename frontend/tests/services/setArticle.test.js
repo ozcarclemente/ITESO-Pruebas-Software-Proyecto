@@ -39,7 +39,7 @@ describe("setArticle Service", () => {
             expect.objectContaining({
                 method: "POST",
                 url: "api/articles",
-            })
+            }),
         );
     });
 
@@ -64,7 +64,7 @@ describe("setArticle Service", () => {
             expect.objectContaining({
                 method: "PUT",
                 url: `api/articles/${slug}`,
-            })
+            }),
         );
     });
 
@@ -83,7 +83,7 @@ describe("setArticle Service", () => {
                 data: {
                     article: mockArticleData,
                 },
-            })
+            }),
         );
     });
 
@@ -102,7 +102,7 @@ describe("setArticle Service", () => {
         expect(axios).toHaveBeenCalledWith(
             expect.objectContaining({
                 headers: customHeaders,
-            })
+            }),
         );
     });
 
@@ -129,7 +129,7 @@ describe("setArticle Service", () => {
                         tagList: [],
                     },
                 },
-            })
+            }),
         );
     });
 
@@ -181,7 +181,7 @@ describe("setArticle Service", () => {
                         tagList: manyTags,
                     },
                 },
-            })
+            }),
         );
     });
 });

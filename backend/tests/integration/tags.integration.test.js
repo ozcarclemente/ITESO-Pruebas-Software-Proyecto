@@ -13,8 +13,7 @@ beforeEach(async () => {
 describe("Tags Routes Integration Tests", () => {
     describe("GET /api/tags", () => {
         it("returns empty list when no tags", async () => {
-            const response = await request(app)
-                .get("/api/tags");
+            const response = await request(app).get("/api/tags");
 
             expect(response.status).toBe(200);
             expect(Array.isArray(response.body.tags)).toBe(true);
@@ -26,8 +25,7 @@ describe("Tags Routes Integration Tests", () => {
             await seedTag({ name: "react" });
             await seedTag({ name: "nodejs" });
 
-            const response = await request(app)
-                .get("/api/tags");
+            const response = await request(app).get("/api/tags");
 
             expect(response.status).toBe(200);
             expect(response.body.tags.length).toBeGreaterThanOrEqual(3);
@@ -41,8 +39,7 @@ describe("Tags Routes Integration Tests", () => {
                 title: "Tagged Article",
             });
 
-            const response = await request(app)
-                .get("/api/tags");
+            const response = await request(app).get("/api/tags");
 
             expect(response.status).toBe(200);
             expect(Array.isArray(response.body.tags)).toBe(true);
@@ -51,8 +48,7 @@ describe("Tags Routes Integration Tests", () => {
         it("works without auth", async () => {
             await seedTag({ name: "public" });
 
-            const response = await request(app)
-                .get("/api/tags");
+            const response = await request(app).get("/api/tags");
 
             expect(response.status).toBe(200);
             expect(response.body.tags.length).toBeGreaterThan(0);

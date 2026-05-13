@@ -75,10 +75,7 @@ describe("Custom Errors", () => {
         });
 
         it("should create error with property and message", () => {
-            const error = new AlreadyTakenError(
-                "Email",
-                "try logging in",
-            );
+            const error = new AlreadyTakenError("Email", "try logging in");
 
             expect(error.message).toBe("Email already exists.. try logging in");
             expect(error.name).toBe("AlreadyTakenError");

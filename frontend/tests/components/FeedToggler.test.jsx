@@ -12,7 +12,11 @@ jest.mock("../../src/context/FeedContext", () => ({
 
 jest.mock("../../src/components/FeedToggler/FeedNavLink", () => {
     return function MockFeedNavLink({ name, text }) {
-        return <li><a data-testid={`feed-link-${name}`}>{text}</a></li>;
+        return (
+            <li>
+                <a data-testid={`feed-link-${name}`}>{text}</a>
+            </li>
+        );
     };
 });
 
@@ -62,7 +66,10 @@ describe("FeedToggler Component", () => {
         const { useFeedContext } = require("../../src/context/FeedContext");
 
         useAuth.mockReturnValue({ isAuth: false });
-        useFeedContext.mockReturnValue({ tabName: "tag", tagName: "javascript" });
+        useFeedContext.mockReturnValue({
+            tabName: "tag",
+            tagName: "javascript",
+        });
 
         render(<FeedToggler />);
 

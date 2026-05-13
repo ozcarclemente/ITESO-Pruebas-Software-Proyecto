@@ -114,19 +114,16 @@ Given(
     },
 );
 
-Given(
-    "I have favorited an article titled {string}",
-    async function (title) {
-        const uniqueTitle = `${title} ${Date.now()}`;
-        const article = await createArticleViaApi({
-            title: uniqueTitle,
-            user: SECOND_USER,
-        });
+Given("I have favorited an article titled {string}", async function (title) {
+    const uniqueTitle = `${title} ${Date.now()}`;
+    const article = await createArticleViaApi({
+        title: uniqueTitle,
+        user: SECOND_USER,
+    });
 
-        await favoriteArticleViaApi({ slug: article.slug, user: DEFAULT_USER });
-        preparedFavoriteTitle = article.title;
-    },
-);
+    await favoriteArticleViaApi({ slug: article.slug, user: DEFAULT_USER });
+    preparedFavoriteTitle = article.title;
+});
 
 Then("I should see the profile username {string}", async function (username) {
     await expect(page.locator(".user-info h4")).toHaveText(username);
@@ -191,14 +188,28 @@ Then(
     },
 );
 
-Then("I should see my created article in the profile articles list", async function () {
-    await expect(profileArticleTitles().filter({ hasText: preparedArticleTitle })).toHaveCount(1);
-});
+Then(
+    "I should see my created article in the profile articles list",
+    async function () {
+        await expect(
+            profileArticleTitles().filter({ hasText: preparedArticleTitle }),
+        ).toHaveCount(1);
+    },
+);
 
-Then("I should see my favorited article in the profile articles list", async function () {
-    await expect(profileArticleTitles().filter({ hasText: preparedFavoriteTitle })).toHaveCount(1);
-});
+Then(
+    "I should see my favorited article in the profile articles list",
+    async function () {
+        await expect(
+            profileArticleTitles().filter({ hasText: preparedFavoriteTitle }),
+        ).toHaveCount(1);
+    },
+);
 
 Then("the {string} profile tab should be active", async function (tabText) {
-    await expect(page.locator(`.articles-toggle .nav-link.active:has-text("${tabText}")`)).toBeVisible();
+    await expect(
+        page.locator(
+            `.articles-toggle .nav-link.active:has-text("${tabText}")`,
+        ),
+    ).toBeVisible();
 });

@@ -32,20 +32,32 @@ describe("FollowButton Component", () => {
 
         it("should not display icon when not authenticated", () => {
             render(<FollowButton followersCount={5} following={false} />);
-            expect(screen.getByRole("button").querySelector("i")).not.toBeInTheDocument();
+            expect(
+                screen.getByRole("button").querySelector("i"),
+            ).not.toBeInTheDocument();
         });
 
         it("should show alert when clicked without authentication", () => {
             render(
-                <FollowButton followersCount={5} following={false} username="testuser" />,
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
             );
             fireEvent.click(screen.getByRole("button"));
-            expect(window.alert).toHaveBeenCalledWith("You need to login first");
+            expect(window.alert).toHaveBeenCalledWith(
+                "You need to login first",
+            );
         });
 
         it("should not call toggleFollow when not authenticated", () => {
             render(
-                <FollowButton followersCount={5} following={false} username="testuser" />,
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
             );
             fireEvent.click(screen.getByRole("button"));
             expect(toggleFollow).not.toHaveBeenCalled();
@@ -74,17 +86,37 @@ describe("FollowButton Component", () => {
         });
 
         it("should display Follow text", () => {
-            render(<FollowButton followersCount={5} following={false} username="testuser" />);
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
+            );
             expect(screen.getByText(/Follow/)).toBeInTheDocument();
         });
 
         it("should display plus icon", () => {
-            render(<FollowButton followersCount={5} following={false} username="testuser" />);
-            expect(screen.getByRole("button").querySelector(".ion-plus-round")).toBeInTheDocument();
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
+            );
+            expect(
+                screen.getByRole("button").querySelector(".ion-plus-round"),
+            ).toBeInTheDocument();
         });
 
         it("should not have btn-secondary class", () => {
-            render(<FollowButton followersCount={5} following={false} username="testuser" />);
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
+            );
             expect(screen.getByRole("button")).not.toHaveClass("btn-secondary");
         });
 
@@ -117,7 +149,11 @@ describe("FollowButton Component", () => {
             toggleFollow.mockReturnValue(new Promise(() => {}));
 
             render(
-                <FollowButton followersCount={5} following={false} username="testuser" />,
+                <FollowButton
+                    followersCount={5}
+                    following={false}
+                    username="testuser"
+                />,
             );
 
             fireEvent.click(screen.getByRole("button"));
@@ -134,17 +170,37 @@ describe("FollowButton Component", () => {
         });
 
         it("should display Unfollow text", () => {
-            render(<FollowButton followersCount={5} following={true} username="testuser" />);
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={true}
+                    username="testuser"
+                />,
+            );
             expect(screen.getByText(/Unfollow/)).toBeInTheDocument();
         });
 
         it("should display minus icon", () => {
-            render(<FollowButton followersCount={5} following={true} username="testuser" />);
-            expect(screen.getByRole("button").querySelector(".ion-minus-round")).toBeInTheDocument();
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={true}
+                    username="testuser"
+                />,
+            );
+            expect(
+                screen.getByRole("button").querySelector(".ion-minus-round"),
+            ).toBeInTheDocument();
         });
 
         it("should have btn-secondary class", () => {
-            render(<FollowButton followersCount={5} following={true} username="testuser" />);
+            render(
+                <FollowButton
+                    followersCount={5}
+                    following={true}
+                    username="testuser"
+                />,
+            );
             expect(screen.getByRole("button")).toHaveClass("btn-secondary");
         });
 
@@ -179,7 +235,13 @@ describe("FollowButton Component", () => {
             isAuth: true,
             headers: { Authorization: "Token test" },
         });
-        render(<FollowButton followersCount={5} following={false} username="testuser" />);
+        render(
+            <FollowButton
+                followersCount={5}
+                following={false}
+                username="testuser"
+            />,
+        );
         expect(screen.getByRole("button")).toHaveClass("action-btn");
     });
 
@@ -188,7 +250,13 @@ describe("FollowButton Component", () => {
             isAuth: true,
             headers: { Authorization: "Token test" },
         });
-        render(<FollowButton followersCount={5} following={false} username="john_doe" />);
+        render(
+            <FollowButton
+                followersCount={5}
+                following={false}
+                username="john_doe"
+            />,
+        );
         expect(screen.getByRole("button")).toHaveTextContent("john_doe");
     });
 
@@ -197,7 +265,9 @@ describe("FollowButton Component", () => {
             isAuth: true,
             headers: { Authorization: "Token test" },
         });
-        const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+        const consoleErrorSpy = jest
+            .spyOn(console, "error")
+            .mockImplementation();
         toggleFollow.mockRejectedValue(new Error("Network error"));
 
         render(

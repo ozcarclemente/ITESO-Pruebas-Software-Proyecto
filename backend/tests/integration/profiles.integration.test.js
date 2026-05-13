@@ -40,8 +40,9 @@ describe("Profiles Routes Integration Tests", () => {
         it("works without auth", async () => {
             await seedUser({ username: "publicprofile" });
 
-            const response = await request(app)
-                .get("/api/profiles/publicprofile");
+            const response = await request(app).get(
+                "/api/profiles/publicprofile",
+            );
 
             expect(response.status).toBe(200);
             expect(response.body.profile.username).toBe("publicprofile");
@@ -71,8 +72,9 @@ describe("Profiles Routes Integration Tests", () => {
         it("requires auth", async () => {
             await seedUser({ username: "needsauth" });
 
-            const response = await request(app)
-                .post("/api/profiles/needsauth/follow");
+            const response = await request(app).post(
+                "/api/profiles/needsauth/follow",
+            );
 
             expect(response.status).toBe(401);
         });
@@ -118,8 +120,9 @@ describe("Profiles Routes Integration Tests", () => {
         it("requires auth", async () => {
             await seedUser({ username: "unfollowauth" });
 
-            const response = await request(app)
-                .delete("/api/profiles/unfollowauth/follow");
+            const response = await request(app).delete(
+                "/api/profiles/unfollowauth/follow",
+            );
 
             expect(response.status).toBe(401);
         });
