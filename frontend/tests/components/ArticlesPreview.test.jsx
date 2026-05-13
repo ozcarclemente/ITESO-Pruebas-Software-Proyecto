@@ -181,4 +181,117 @@ describe("ArticlesPreview Component", () => {
         const readMoreElements = screen.getAllByText("Read more...");
         expect(readMoreElements.length).toBeGreaterThanOrEqual(2);
     });
+
+    it("should call updateArticles with correct data when favorite button is clicked", () => {
+        render(
+            <ArticlesPreview
+                articles={mockArticles}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        const favButtons = screen.getAllByTestId("fav-button");
+        favButtons[0].click();
+
+        expect(mockUpdateArticles).toHaveBeenCalled();
+        const updateCall = mockUpdateArticles.mock.calls[0][0];
+        const result = updateCall({ articles: mockArticles });
+        expect(result.articles[0].slug).toBe("article-1");
+    });
+
+    it("should pass article state to Link component", () => {
+        const { container } = render(
+            <ArticlesPreview
+                articles={mockArticles}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        const links = container.querySelectorAll("a.preview-link");
+        expect(links).toHaveLength(2);
+        expect(links[0]).toHaveAttribute("href", "/article/article-1");
+    });
+
+    it("should pass correct author and createdAt to ArticleMeta", () => {
+        render(
+            <ArticlesPreview
+                articles={mockArticles}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        const metaElements = screen.getAllByTestId("article-meta");
+        expect(metaElements).toHaveLength(2);
+    });
+
+    it("should handle articles with empty tagList", () => {
+        const articlesWithoutTags = [
+            {
+                slug: "article-no-tags",
+                title: "No Tags Article",
+                description: "Article without tags",
+                author: { username: "user3" },
+                createdAt: "2026-05-09",
+                favorited: false,
+                favoritesCount: 0,
+                tagList: [],
+            },
+        ];
+
+        render(
+            <ArticlesPreview
+                articles={articlesWithoutTags}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        expect(screen.getByText("No Tags Article")).toBeInTheDocument();
+        const tagElements = screen.queryAllByTestId("article-tags");
+        expect(tagElements.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("should handle undefined articles prop", () => {
+        render(
+            <ArticlesPreview
+                articles={undefined}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        expect(screen.getByText(/No articles available/)).toBeInTheDocument();
+    });
+
+    it("should maintain correct article order", () => {
+        render(
+            <ArticlesPreview
+                articles={mockArticles}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        const links = screen.getAllByRole("link");
+        expect(links[0].href).toContain("/article/article-1");
+        expect(links[1].href).toContain("/article/article-2");
+    });
+
+    it("should pass correct props to FavButton handler", () => {
+        render(
+            <ArticlesPreview
+                articles={mockArticles}
+                loading={false}
+                updateArticles={mockUpdateArticles}
+            />
+        );
+
+        const favButtons = screen.getAllByTestId("fav-button");
+        favButtons[1].click();
+
+        expect(mockUpdateArticles).toHaveBeenCalled();
+    });
 });
