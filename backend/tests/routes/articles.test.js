@@ -1,7 +1,6 @@
 const request = require("supertest");
-const { describe, it, expect, beforeEach, afterEach } = require("@jest/globals");
+const { describe, it, expect, beforeEach } = require("@jest/globals");
 const express = require("express");
-const jwt = require("jsonwebtoken");
 
 // Mock models
 jest.mock("../../models", () => ({

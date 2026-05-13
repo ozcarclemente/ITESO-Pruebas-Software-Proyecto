@@ -134,7 +134,7 @@ describe("FeedNavLink Component", () => {
             changeTab: mockChangeTab,
         });
 
-        const { container } = render(
+        render(
             <FeedNavLink icon name="tag" text="python" />,
         );
 

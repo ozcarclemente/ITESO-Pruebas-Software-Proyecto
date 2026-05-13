@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, beforeEach } from "@jest/globals";
 import FeedProvider, { useFeedContext } from "../../src/context/FeedContext";
 

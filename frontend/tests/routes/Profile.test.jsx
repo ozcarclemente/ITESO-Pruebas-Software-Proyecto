@@ -22,7 +22,7 @@ jest.mock("../../src/components/ContainerRow", () => ({
 
 jest.mock("../../src/components/NavItem", () => ({
     __esModule: true,
-    default: ({ text, url, state }) => (
+    default: ({ text }) => (
         <li data-testid={`nav-item-${text.replace(/ /g, "-").toLowerCase()}`}>
             {text}
         </li>
