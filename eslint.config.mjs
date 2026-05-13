@@ -77,7 +77,7 @@ export default defineConfig([
     {
         files: ["backend/tests/**/*.js"],
         languageOptions: {
-            globals: globals.node,
+            globals: { ...globals.node, ...globals.jest },
             sourceType: "commonjs",
         },
     },

@@ -1,23 +1,71 @@
 module.exports = {
-    testEnvironment: "node",
-
-    testMatch: ["<rootDir>/tests/**/*.test.js"],
-
+    projects: [
+        {
+            name: "backend:unit",
+            displayName: "backend:unit",
+            testEnvironment: "node",
+            testMatch: ["<rootDir>/tests/**/*.test.js", "!<rootDir>/tests/integration/**"],
+            globals: {
+                describe: "readonly",
+                it: "readonly",
+                expect: "readonly",
+                beforeAll: "readonly",
+                afterAll: "readonly",
+                beforeEach: "readonly",
+                afterEach: "readonly",
+            },
+            collectCoverageFrom: [
+                "**/*.js",
+                "!tests/**",
+                "!node_modules/**",
+                "!coverage/**",
+                "!index.js",
+                "!config/**",
+                "!migrations/**",
+                "!seeders/**",
+                "!**/*.test.js",
+            ],
+            coveragePathIgnorePatterns: ["/node_modules/", "/coverage/"],
+        },
+        {
+            name: "backend:integration",
+            displayName: "backend:integration",
+            testEnvironment: "node",
+            testMatch: ["<rootDir>/tests/integration/**/*.integration.test.js"],
+            testTimeout: 30000,
+            globals: {
+                describe: "readonly",
+                it: "readonly",
+                expect: "readonly",
+                beforeAll: "readonly",
+                afterAll: "readonly",
+                beforeEach: "readonly",
+                afterEach: "readonly",
+            },
+            collectCoverageFrom: [
+                "**/*.js",
+                "!tests/**",
+                "!node_modules/**",
+                "!coverage/**",
+                "!index.js",
+                "!config/**",
+                "!migrations/**",
+                "!seeders/**",
+                "!**/*.test.js",
+            ],
+            coveragePathIgnorePatterns: ["/node_modules/", "/coverage/"],
+        },
+    ],
+    coverageReporters: ["text", "json", "html", "lcov"],
     collectCoverageFrom: [
         "**/*.js",
-
         "!tests/**",
         "!node_modules/**",
         "!coverage/**",
-
         "!index.js",
         "!config/**",
         "!migrations/**",
         "!seeders/**",
         "!**/*.test.js",
     ],
-
-    coveragePathIgnorePatterns: ["/node_modules/", "/coverage/"],
-
-    coverageReporters: ["text", "json", "html", "lcov"],
 };
